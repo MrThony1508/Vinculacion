@@ -1,0 +1,133 @@
+{% extends "docente.html" %}
+
+{% block contenido %}
+<div class="container animate-in">
+
+  <div class="d-flex align-items-center gap-3 mb-4">
+    <a href="{% url 'lista_grupos' %}" class="btn btn-outline-secondary btn-sm rounded-circle">
+      <i class="bi bi-arrow-left"></i>
+    </a>
+    <div>
+      <h4 class="fw-bold mb-0" style="color: #194077;">
+        {{ grupo.nombre }}
+      </h4>
+      <span class="badge bg-primary-subtle text-primary border border-primary-subtitle px-3">
+        Configuración de Integrantes
+      </span>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-lg-4 mb-4">
+      <div class="card border-0 shadow-sm" style="border-radius: 15px;">
+        <div class="card-body p-4">
+          <h6 class="fw-bold mb-3"><i class="bi bi-person-plus me-2 text-primary"></i>Asignar Estudiante</h6>
+          <p class="text-muted small">Seleccione un estudiante de la lista general para vincularlo a este grupo.</p>
+          
+          <form method="POST" id="frm_asignar">
+            {% csrf_token %}
+            <div class="mb-3">
+              <select name="estudiante_id" class="form-select shadow-none" 
+                      style="border-radius: 10px; padding: 10px;" required>
+                <option value="" selected disabled>Buscar estudiante...</option>
+                {% for e in estudiantes_disponibles %}
+                  <option value="{{ e.id }}">
+                    {{ e.nombre }} {{ e.apellido }}
+                  </option>
+                {% endfor %}
+              </select>
+            </div>
+            <button class="btn w-100 text-white fw-bold shadow-sm" 
+                    style="background-color: #194077; border-radius: 10px; padding: 10px;">
+              <i class="bi bi-plus-lg me-2"></i>Añadir al Grupo
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <div class="card border-0 shadow-sm mt-4 bg-light" style="border-radius: 15px;">
+        <div class="card-body">
+          <div class="d-flex align-items-center justify-content-between">
+            <span class="text-muted small fw-bold text-uppercase">Total Integrantes</span>
+            <h3 class="fw-bold mb-0" style="color: #194077;">{{ estudiantes_grupo.count }}</h3>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-8 mb-4">
+      <div class="card border-0 shadow-sm" style="border-radius: 15px; overflow: hidden;">
+        <div class="card-header bg-white border-0 py-3">
+          <h6 class="fw-bold mb-0"><i class="bi bi-list-check me-2 text-primary"></i>Lista de Integrantes</h6>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+            <thead style="background-color: #f8f9fa;">
+              <tr class="text-secondary small text-uppercase">
+                <th class="ps-4">Estudiante</th>
+                <th class="text-center">Carrera</th>
+                <th class="text-center">Práctica</th>
+                <th class="text-center">Acción</th>
+              </tr>
+            </thead>
+            <tbody class="border-top-0">
+              {% for e in estudiantes_grupo %}
+              <tr>
+                <td class="ps-4">
+                  <div class="fw-bold text-dark">{{ e.nombre }} {{ e.apellido }}</div>
+                  <small class="text-muted">{{ e.cedula }}</small>
+                </td>
+                <td class="text-center small">{{ e.carrera }}</td>
+                <td class="text-center">
+                  <span class="badge bg-light text-dark border px-2">{{ e.tipo_practica }}</span>
+                </td>
+                <td class="text-center">
+                  <button onclick="removerDelGrupo('{{ e.id }}')"
+                          class="btn btn-sm btn-outline-danger border-0 rounded-circle"
+                          title="Remover del grupo">
+                    <i class="bi bi-person-x-fill fs-5"></i>
+                  </button>
+                </td>
+              </tr>
+              {% empty %}
+              <tr>
+                <td colspan="4" class="text-center py-5 text-muted">
+                  <i class="bi bi-people fs-2 d-block mb-2 opacity-25"></i>
+                  No hay estudiantes asignados a este grupo.
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<style>
+  .bg-primary-subtle { background-color: #e7effb !important; }
+  .text-primary { color: #194077 !important; }
+</style>
+
+<script>
+  function removerDelGrupo(id) {
+    Swal.fire({
+      title: "¿Remover estudiante?",
+      text: "El estudiante dejará de pertenecer a este grupo, pero seguirá registrado en el sistema.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#194077",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Sí, remover",
+      cancelButtonText: "Cancelar",
+      reverseButtons: true
+    }).then((result) => {
+      if (result.isConfirmed) {
+        window.location.href = "/estudiantes/remover_grupo/" + id + "/";
+      }
+    });
+  }
+</script>
+{% endblock %}

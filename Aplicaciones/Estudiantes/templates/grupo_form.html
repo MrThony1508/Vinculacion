@@ -1,0 +1,163 @@
+{% extends "docente.html" %}
+
+{% block contenido %}
+<div class="container animate-in">
+  <div class="row justify-content-center">
+    <div class="col-lg-10">
+      
+      <div class="mb-4 d-flex align-items-center gap-3">
+        <a href="{% url 'lista_grupos' %}" class="btn btn-outline-secondary btn-sm rounded-circle">
+          <i class="bi bi-arrow-left"></i>
+        </a>
+        <div>
+          <h4 class="fw-bold mb-1" style="color: #194077;">
+            <i class="bi bi-plus-square-fill me-2"></i>Crear Nuevo Grupo
+          </h4>
+          <p class="text-muted small mb-0">Defina el nombre, actividades y ubicación geográfica del grupo de prácticas.</p>
+        </div>
+      </div>
+
+      <div class="card shadow-sm border-0" style="border-radius: 15px; overflow: hidden;">
+        <div class="card-body p-4 p-md-5">
+          
+          <form action="{% url 'guardar_grupo' %}" method="POST" id="frm_grupo">
+            {% csrf_token %}
+
+            <div class="row g-4">
+              <div class="col-md-5">
+                <h6 class="fw-bold text-dark mb-3">Detalles del Grupo</h6>
+                
+                <div class="mb-3">
+                  <label class="form-label fw-semibold">Nombre del Grupo</label>
+                  <input type="text" name="nombre" class="form-control shadow-none" 
+                         placeholder="Ej: Grupo de Software A" style="border-radius: 10px;">
+                  <div class="form-text mt-2" style="font-size: 0.75rem;">
+                    <i class="bi bi-info-circle me-1"></i> Si se deja vacío, se asignará un nombre automático.
+                  </div>
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label fw-semibold">Actividades Realizadas</label>
+                  <textarea name="actividades_realizadas" class="form-control shadow-none" 
+                            rows="6" placeholder="Describa las tareas o hitos del grupo..." 
+                            style="border-radius: 10px;" required></textarea>
+                </div>
+              </div>
+
+              <div class="col-md-7">
+                <h6 class="fw-bold text-dark mb-3">Ubicación Geográfica</h6>
+                
+                <div class="position-relative">
+                  <div class="input-group mb-2 shadow-sm" style="position: absolute; top: 10px; left: 10px; z-index: 5; width: calc(100% - 20px);">
+                    <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-primary"></i></span>
+                    <input id="pac-input" class="form-control border-start-0 ps-0" type="text" placeholder="Buscar dirección o lugar en Latacunga...">
+                  </div>
+
+                  <div id="map" class="border" style="height:380px; width:100%; border-radius: 12px; box-shadow: inset 0 0 10px rgba(0,0,0,0.05);"></div>
+                </div>
+
+                <div class="d-flex gap-3 mt-2">
+                   <div class="small text-muted"><i class="bi bi-geo-alt-fill me-1"></i> Arrastre el marcador para precisar la ubicación.</div>
+                </div>
+
+                <input type="hidden" name="latitud" id="latitud">
+                <input type="hidden" name="longitud" id="longitud">
+              </div>
+            </div>
+
+            <hr class="my-4 opacity-10">
+
+            <div class="d-flex justify-content-end gap-3">
+              <a href="{% url 'lista_grupos' %}" class="btn btn-light px-4 border" style="border-radius: 8px;">
+                Cancelar
+              </a>
+              <button type="submit" class="btn px-5 fw-bold text-white shadow-sm" 
+                      style="background-color: #194077; border-radius: 8px;">
+                <i class="bi bi-check-circle me-2"></i>Crear Grupo
+              </button>
+            </div>
+          </form>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  #pac-input:focus { border-color: #dee2e6; box-shadow: none; }
+  .form-control:focus { border-color: #194077; box-shadow: 0 0 0 0.25rem rgba(25, 64, 119, 0.1); }
+</style>
+
+<script>
+  let map;
+  let marker;
+
+  function initMap() {
+    const defaultLocation = { lat: -0.9333, lng: -78.6167 }; // Latacunga, UTC
+
+    map = new google.maps.Map(document.getElementById("map"), {
+      center: defaultLocation,
+      zoom: 14,
+      styles: [ /* Estilo de mapa opcional más limpio */
+        { featureType: "poi", elementType: "labels", stylers: [{ visibility: "off" }] }
+      ]
+    });
+
+    marker = new google.maps.Marker({
+      position: defaultLocation,
+      map: map,
+      draggable: true,
+      animation: google.maps.Animation.DROP,
+    });
+
+    // Actualizar campos ocultos
+    document.getElementById("latitud").value = defaultLocation.lat;
+    document.getElementById("longitud").value = defaultLocation.lng;
+
+    marker.addListener("dragend", function () {
+      const pos = marker.getPosition();
+      document.getElementById("latitud").value = pos.lat();
+      document.getElementById("longitud").value = pos.lng();
+    });
+
+    const input = document.getElementById("pac-input");
+    const searchBox = new google.maps.places.SearchBox(input);
+
+    searchBox.addListener("places_changed", function () {
+      const places = searchBox.getPlaces();
+      if (places.length === 0) return;
+
+      const place = places[0];
+      if (!place.geometry) return;
+
+      map.panTo(place.geometry.location);
+      map.setZoom(17);
+      marker.setPosition(place.geometry.location);
+
+      document.getElementById("latitud").value = place.geometry.location.lat();
+      document.getElementById("longitud").value = place.geometry.location.lng();
+    });
+  }
+</script>
+
+<script
+  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD0Ko6qUa0EFuDWr77BpNJOdxD-QLstjBk&libraries=places&callback=initMap"
+  async defer>
+</script>
+
+<script>
+  $("#frm_grupo").validate({
+    errorClass: "text-danger small mt-1",
+    rules: {
+      actividades_realizadas: { required: true, minlength: 10 }
+    },
+    messages: {
+      actividades_realizadas: {
+        required: "Este campo es obligatorio",
+        minlength: "Por favor, describa las actividades con más detalle."
+      }
+    }
+  });
+</script>
+{% endblock %}

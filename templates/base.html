@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SIGUTC | Inicio</title>
+
+  <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+  <style>
+    :root {
+      --utc-blue: #1e293b;
+      --utc-accent: #312783;
+      --transition: all 0.3s ease;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f8fafc;
+      color: #334155;
+    }
+
+    /* NAVBAR MEJORADA */
+    .navbar {
+      background: rgba(255, 255, 255, 0.98);
+      backdrop-filter: blur(10px);
+      padding: 0.8rem 0;
+    }
+
+    .navbar-brand img {
+      height: 65px; /* Tamaño optimizado */
+      width: auto;
+    }
+
+    .nav-link {
+      color: #64748b !important;
+      position: relative;
+      padding: 0.5rem 1rem !important;
+      transition: var(--transition);
+    }
+
+    /* Efecto de subrayado en hover */
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 2px;
+      bottom: 0;
+      left: 50%;
+      background: var(--utc-accent);
+      transition: var(--transition);
+      transform: translateX(-50%);
+    }
+
+    .nav-link:hover::after {
+      width: 70%;
+    }
+
+    .nav-link:hover {
+      color: var(--utc-accent) !important;
+    }
+
+    .nav-link.active {
+      color: var(--utc-accent) !important;
+      font-weight: 700;
+    }
+
+    /* BOTÓN ACCESO */
+    .btn-acceso {
+      border: 2px solid var(--utc-accent);
+      color: var(--utc-accent);
+      border-radius: 50px;
+      padding: 0.5rem 1.5rem;
+      font-weight: 600;
+      transition: var(--transition);
+    }
+
+    .btn-acceso:hover {
+      background: var(--utc-accent);
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(49, 39, 131, 0.2);
+    }
+
+    /* CARDS & CONTENIDO */
+    .card {
+      border: none;
+      border-radius: 15px;
+      transition: var(--transition);
+    }
+
+    .card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    }
+
+    /* FOOTER */
+    footer {
+      background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+    }
+
+    footer a:hover {
+      color: #94a3b8 !important;
+      padding-left: 5px;
+      transition: var(--transition);
+    }
+
+    .social-icon {
+      width: 40px;
+      height: 40px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.1);
+      transition: var(--transition);
+    }
+
+    .social-icon:hover {
+      background: var(--utc-accent);
+      transform: translateY(-3px);
+    }
+  </style>
+</head>
+<body>
+
+<header class="shadow-sm sticky-top">
+  <nav class="navbar navbar-expand-lg">
+    <div class="container">
+      
+      <a class="navbar-brand d-flex align-items-center" href="/">
+        <img src="https://investigacion.utc.edu.ec/public/site/images/prospectivas/UTC.png" alt="UTC Logo" class="me-3">
+        <div class="d-none d-sm-flex flex-column lh-1">
+          <span class="fw-bold" style="color: var(--utc-accent); font-size: 1.1rem; letter-spacing: -0.5px;">UNIVERSIDAD TÉCNICA DE COTOPAXI</span>
+          <small class="text-muted mt-1" style="font-size: 0.65rem; font-weight: 600; text-transform: uppercase;">Vinculación con el Pueblo</small>
+        </div>
+      </a>
+
+      <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
+        <ul class="navbar-nav gap-2 fw-medium">
+          <li class="nav-item"><a class="nav-link active" href="/">Inicio</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'inicio2' %}">Vinculación</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'inicio3' %}">Programas</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'inicio4' %}">Reportes</a></li>
+        </ul>
+      </div>
+
+      <div class="d-flex align-items-center">
+        <a href="{% url 'login' %}" class="btn btn-acceso shadow-sm">
+          <i class="bi bi-person-fill me-2"></i>Acceso
+        </a>
+      </div>
+
+    </div>
+  </nav>
+</header>
+
+<main class="container py-5">
+  {% block contenido %}
+  {% endblock %}
+</main>
+<footer class="text-white pt-5 pb-4 mt-5" style="background-color: var(--utc-dark);">
+  <div class="container">
+    <div class="row g-4 text-center text-md-start">
+
+      <div class="col-md-5">
+        <h6 class="text-uppercase fw-bold mb-4 border-start border-3 border-primary ps-3">Nuestros Campus</h6>
+        <div style="max-height: 350px; overflow-y: auto; padding-right: 15px;" class="custom-scroll">
+          
+          <div class="mb-3">
+            <p class="small fw-bold mb-1 text-primary">CAMPUS LA MATRIZ</p>
+            <p class="small mb-1"><i class="bi bi-geo-alt-fill me-2 text-primary"></i> Av. Simón Rodríguez s/n Barrio El Ejido Sector San Felipe. Latacunga.</p>
+            <p class="small mb-0"><i class="bi bi-telephone-fill me-2 text-primary"></i> (593) 03 2252205 / 2252307</p>
+          </div>
+
+          <div class="mb-3">
+            <p class="small fw-bold mb-1 text-primary">CAMPUS SALACHE</p>
+            <p class="small mb-1"><i class="bi bi-geo-alt-fill me-2 text-primary"></i> Vía Salache, km 7,53 sector La Florida, Latacunga.</p>
+            <p class="small mb-0"><i class="bi bi-telephone-fill me-2 text-primary"></i> 2266164</p>
+          </div>
+
+          <div class="mb-3">
+            <p class="small fw-bold mb-1 text-primary">CAMPUS SALCEDO</p>
+            <p class="small mb-1"><i class="bi bi-geo-alt-fill me-2 text-primary"></i> Calle Río Cutuchi y Cusubamba. Salcedo.</p>
+            <p class="small mb-0"><i class="bi bi-telephone-fill me-2 text-primary"></i> 0995406211</p>
+          </div>
+
+          <div class="mb-3">
+            <p class="small fw-bold mb-1 text-primary">EXTENSIÓN PUJILÍ</p>
+            <p class="small mb-1"><i class="bi bi-geo-alt-fill me-2 text-primary"></i> Pasaje Carlos Alberto Toro Lema y José Merizalde.</p>
+            <p class="small mb-0"><i class="bi bi-telephone-fill me-2 text-primary"></i> (03) 2141080</p>
+          </div>
+
+          <div class="mb-3">
+            <p class="small fw-bold mb-1 text-primary">EXTENSIÓN LA MANÁ</p>
+            <p class="small mb-1"><i class="bi bi-geo-alt-fill me-2 text-primary"></i> Av. Los Almendros y calle Pujilí sector La Virgen.</p>
+            <p class="small mb-0"><i class="bi bi-telephone-fill me-2 text-primary"></i> (03) 7103409</p>
+          </div>
+          
+          <div class="mt-3 pt-2 border-top border-secondary">
+            <p class="small"><i class="bi bi-envelope-fill me-2 text-primary"></i> info@utc.edu.ec</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-3 text-center">
+        <h6 class="text-uppercase fw-bold mb-4">Navegación</h6>
+        <ul class="list-unstyled small">
+          <li class="mb-2"><a href="/" class="text-white text-decoration-none">Portal Principal</a></li>
+          <li class="mb-2"><a href="{% url 'inicio2' %}" class="text-white text-decoration-none">Vinculación</a></li>
+          <li class="mb-2"><a href="{% url 'inicio3' %}" class="text-white text-decoration-none">Programas</a></li>
+          <li class="mb-2"><a href="{% url 'login' %}" class="text-white text-decoration-none">Login</a></li>
+        </ul>
+      </div>
+
+      <div class="col-md-4 text-center text-md-end">
+          <h6 class="text-uppercase fw-bold mb-4">Redes Sociales</h6>
+          <div class="d-flex justify-content-center justify-content-md-end gap-3">
+              <a href="https://www.facebook.com/universidadtecnicadecotopaxi/" target="_blank" rel="noopener noreferrer" class="text-white social-icon fs-4">
+                  <i class="bi bi-facebook"></i>
+              </a>
+              <a href="https://x.com/utcCotopaxi" target="_blank" rel="noopener noreferrer" class="text-white social-icon fs-4">
+                  <i class="bi bi-twitter-x"></i>
+              </a>
+              <a href="https://www.instagram.com/utc_cotopaxi/" target="_blank" rel="noopener noreferrer" class="text-white social-icon fs-4">
+                  <i class="bi bi-instagram"></i>
+              </a>
+              <a href="https://www.youtube.com/@UTCCotopaxiOficial" target="_blank" rel="noopener noreferrer" class="text-white social-icon fs-4">
+                  <i class="bi bi-youtube"></i>
+              </a>
+          </div>
+      </div>
+    </div>
+
+    <hr class="my-4 opacity-25">
+    <div class="text-center small text-muted">
+      © 2026 Universidad Técnica de Cotopaxi. Diseñado para la gestión académica institucional.
+    </div>
+  </div>
+</footer>
+
+<style>
+  .custom-scroll::-webkit-scrollbar { width: 6px; }
+  .custom-scroll::-webkit-scrollbar-track { background: rgba(255,255,255,0.1); }
+  .custom-scroll::-webkit-scrollbar-thumb { background: var(--utc-blue); border-radius: 10px; }
+  .social-icon:hover { color: var(--utc-blue) !important; transition: 0.3s; transform: translateY(-3px); display: inline-block; }
+</style>
+
+{% if messages %}
+  {% for mensaje in messages %}
+    <script>
+      Swal.fire({
+        title: "¡Hecho!",
+        text: "{{ mensaje }}",
+        icon: "success",
+        confirmButtonColor: "#312783",
+        customClass: { popup: 'rounded-4' }
+      });
+    </script>
+  {% endfor %}
+{% endif %}
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  AOS.init({ duration: 800, once: true });
+</script>
+
+</body>
+</html>

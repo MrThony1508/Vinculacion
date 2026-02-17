@@ -1,0 +1,168 @@
+{% extends 'base1.html' %}
+
+{% block contenido %}
+<style>
+    /* Fondo con blur */
+    body::before {
+        content: '';
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background-image: url('https://www.revistarupturas.com/images/utcinfraestructura.jpg?crc=15102744');
+        background-size: cover;
+        background-position: center;
+        filter: blur(4px) brightness(0.6);
+        z-index: -1;
+    }
+
+    .login-logo {
+        max-width: 220px;
+        margin-bottom: 1.5rem;
+        filter: drop-shadow(0px 4px 10px rgba(0,0,0,0.3));
+    }
+
+    /* El contenedor del borde animado */
+    .login-wrapper {
+        position: relative;
+        border-radius: 25px;
+        padding: 4px; /* Grosor del borde */
+        overflow: hidden;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+    }
+
+    /* Animación del borde con colores UTC */
+    .login-wrapper::before {
+        content: '';
+        position: absolute;
+        inset: -100px;
+        background: conic-gradient(#194077, #4facfe, #194077, #4facfe);
+        animation: rotate 4s linear infinite;
+        z-index: 0;
+    }
+
+    @keyframes rotate {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+
+    .login-card {
+        position: relative;
+        z-index: 1;
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 22px;
+        padding: 2.5rem;
+        width: 100%;
+        max-width: 400px;
+        backdrop-filter: blur(10px);
+    }
+
+    .login-card h2 {
+        color: #194077;
+        font-weight: 800;
+        text-align: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .btn-custom {
+        background-color: #194077;
+        color: white;
+        border-radius: 10px;
+        padding: 10px;
+        font-weight: 600;
+        transition: 0.3s;
+    }
+
+    .btn-custom:hover {
+        background-color: #0b2a53;
+        color: white;
+        transform: scale(1.02);
+    }
+
+    .input-group-text {
+        background-color: transparent;
+        border-right: none;
+        color: #194077;
+    }
+
+    .form-control {
+        border-left: none;
+        border-radius: 0 10px 10px 0;
+    }
+
+    .form-control:focus {
+        box-shadow: none;
+        border-color: #ced4da;
+    }
+
+    .input-group:focus-within .input-group-text,
+    .input-group:focus-within .form-control {
+        border-color: #194077;
+    }
+
+    .forgot-password {
+        font-size: 0.85rem;
+        text-align: right;
+        margin-bottom: 1.5rem;
+    }
+
+    .forgot-password a {
+        color: #194077;
+        text-decoration: none;
+    }
+</style>
+
+<div class="d-flex flex-column align-items-center">
+    <img src="https://gaceta.utc.edu.ec/Content/template/img/utc22.png" alt="Logo UTC" class="login-logo">
+
+    <div class="login-wrapper">
+        <div class="login-card">
+            <h2>Iniciar Sesión</h2>
+
+            {% if messages %}
+                {% for m in messages %}
+                <div class="alert alert-danger py-2 small text-center">{{ m }}</div>
+                {% endfor %}
+            {% endif %}
+
+            <form method="POST" id="loginForm">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label class="form-label small fw-bold">Usuario</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-person"></i></span>
+                        <input type="text" name="username" class="form-control" placeholder="Nombre de usuario" required>
+                    </div>
+                </div>
+
+                <div class="mb-1">
+                    <label class="form-label small fw-bold">Contraseña</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                        <input type="password" name="password" class="form-control" placeholder="••••••••" required>
+                    </div>
+                </div>
+
+                <div class="forgot-password">
+                    <a href="{% url 'password_reset' %}">¿Olvidaste tu contraseña?</a>
+                </div>
+
+                <button type="submit" class="btn btn-custom w-100">
+                    <i class="bi bi-box-arrow-in-right me-2"></i>Ingresar
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        // Ejemplo de validación rápida
+        $("#loginForm").validate({
+            errorClass: "text-danger small mt-1",
+            messages: {
+                username: "Por favor, ingrese su usuario",
+                password: "La contraseña es obligatoria"
+            }
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,105 @@
+{% extends "docente.html" %}
+
+{% block contenido %}
+<div class="container animate-in">
+
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h4 class="fw-bold mb-1" style="color: #194077;">
+        <i class="bi bi-grid-1x2-fill me-2"></i>Grupos de Prácticas
+      </h4>
+      <p class="text-muted small mb-0">Gestione las unidades de trabajo y los equipos de estudiantes.</p>
+    </div>
+
+    <a href="{% url 'crear_grupo' %}" class="btn shadow-sm text-white" 
+       style="background-color: #194077; border-radius: 10px; padding: 10px 20px;">
+      <i class="bi bi-plus-circle-fill me-2"></i>Nuevo Grupo
+    </a>
+  </div>
+
+  <div class="row">
+    {% for g in grupos %}
+    <div class="col-md-6 col-xl-4 mb-4">
+      <div class="card border-0 shadow-sm h-100" style="border-radius: 15px; transition: transform 0.2s;">
+        
+        <div style="height: 6px; background-color: #194077; border-radius: 15px 15px 0 0;"></div>
+        
+        <div class="card-body p-4">
+          <div class="d-flex justify-content-between align-items-start mb-3">
+            <div class="bg-light p-3 rounded-3">
+              <i class="bi bi-collection-fill fs-4" style="color: #194077;"></i>
+            </div>
+            <span class="badge rounded-pill bg-light text-dark border px-3">
+              ID: {{ g.id }}
+            </span>
+          </div>
+
+          <h5 class="fw-bold text-dark mb-1">{{ g.nombre }}</h5>
+          <p class="text-muted small mb-3">Carrera / Periodo Académico</p>
+
+          <div class="d-flex align-items-center gap-2 mb-4">
+            <i class="bi bi-people text-secondary"></i>
+            <span class="fw-semibold">{{ g.estudiantes.count }}</span>
+            <span class="text-muted small">Estudiantes registrados</span>
+          </div>
+
+          <div class="row g-2">
+            <div class="col-8">
+              <a href="{% url 'detalle_grupo' g.id %}" class="btn w-100 fw-bold border" 
+                 style="background-color: #f8f9fa; color: #194077; border-radius: 8px;">
+                <i class="bi bi-eye-fill me-2"></i>Ver Detalle
+              </a>
+            </div>
+            <div class="col-4">
+              <button onclick="eliminarGrupo('{{ g.id }}')" class="btn btn-outline-danger w-100" 
+                      style="border-radius: 8px;" title="Eliminar Grupo">
+                <i class="bi bi-trash3"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+      <div class="text-center py-5 bg-white rounded-4 shadow-sm border border-dashed">
+        <i class="bi bi-folder-plus fs-1 text-muted opacity-50 mb-3 d-block"></i>
+        <h5 class="text-secondary">No hay grupos creados</h5>
+        <p class="text-muted small">Haga clic en el botón superior para registrar su primer grupo.</p>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+</div>
+
+<style>
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.08) !important;
+  }
+  .border-dashed {
+    border: 2px dashed #dee2e6 !important;
+  }
+</style>
+
+<script>
+  function eliminarGrupo(id) {
+    Swal.fire({
+      title: "¿Deseas eliminar este grupo?",
+      text: "Se desasignarán los estudiantes. Esta acción no se puede deshacer.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#6c757d",
+      confirmButtonText: "Sí, eliminar grupo",
+      cancelButtonText: "Cancelar",
+      reverseButtons: true
+    }).then((result) => {
+      if (result.isConfirmed) {
+        window.location.href = "/grupos/eliminar/" + id + "/";
+      }
+    });
+  }
+</script>
+{% endblock %}

@@ -1,0 +1,171 @@
+{% extends "admin.html" %}
+
+{% block contenido %}
+<div class="container-fluid animate-fade-in">
+  
+  <div class="mb-4 text-center">
+    <h4 class="fw-bold text-dark mb-1">Registro de Docente</h4>
+    <p class="text-muted small">Complete la información detallada para dar de alta al nuevo catedrático.</p>
+  </div>
+
+  <div class="row justify-content-center">
+    <div class="col-lg-8 col-xl-7">
+      <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+        <div style="height: 4px; background: linear-gradient(90deg, #1e1e2d, #475569);"></div>
+        
+        <div class="card-body p-4 p-md-5">
+          <form action="{% url 'guardar_docente' %}" method="POST" id="frm_docente">
+            {% csrf_token %}
+
+            <div class="row mb-4">
+              <div class="col-12 mb-3">
+                <label class="form-label fw-bold text-secondary small text-uppercase">Información Personal</label>
+                <hr class="mt-0 opacity-10">
+              </div>
+              
+              <div class="col-md-6 mb-3">
+                <label class="form-label small fw-semibold">Nombres</label>
+                <div class="input-group">
+                  <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-person"></i></span>
+                  <input type="text" name="nombre" class="form-control border-start-0 ps-0" placeholder="Ej: Juan Carlos">
+                </div>
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label class="form-label small fw-semibold">Apellidos</label>
+                <div class="input-group">
+                  <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-person"></i></span>
+                  <input type="text" name="apellido" class="form-control border-start-0 ps-0" placeholder="Ej: Pérez Armas">
+                </div>
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label class="form-label small fw-semibold">Cédula de Identidad</label>
+                <div class="input-group">
+                  <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-card-text"></i></span>
+                  <input type="text" name="cedula" class="form-control border-start-0 ps-0" placeholder="050xxxxxxx">
+                </div>
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label class="form-label small fw-semibold">Correo Institucional</label>
+                <div class="input-group">
+                  <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-envelope"></i></span>
+                  <input type="email" name="correo" class="form-control border-start-0 ps-0" placeholder="usuario@utc.edu.ec">
+                </div>
+              </div>
+            </div>
+
+            <div class="row mb-5">
+              <div class="col-12 mb-3">
+                <label class="form-label fw-bold text-secondary small text-uppercase">Asignación Académica</label>
+                <hr class="mt-0 opacity-10">
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label class="form-label small fw-semibold">Carrera</label>
+                <select name="carrera" class="form-select bg-light border-0 py-2">
+                  <option value="">Seleccione carrera...</option>
+                  <option value="Sistemas de información">Sistemas de información</option>
+                  <option value="Electromecánica">Electromecánica</option>
+                  <option value="Industrial">Industrial</option>
+                  <option value="Electricidad">Electricidad</option>
+                  <option value="Hidráulica">Hidráulica</option>
+                  <option value="Software">Software</option>
+                </select>
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label class="form-label small fw-semibold">Asignación de Prácticas</label>
+                <select name="asignacion" class="form-select bg-light border-0 py-2">
+                  <option value="">Seleccione asignación...</option>
+                  <option value="PPP">PPP - Prácticas Preprofesionales</option>
+                  <option value="Servicio Comunitario">Servicio Comunitario</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="d-flex gap-3 pt-3">
+              <button type="submit" class="btn btn-dark w-100 py-2 rounded-3 shadow-sm d-flex align-items-center justify-content-center gap-2" style="background-color: #1e1e2d; border: none;">
+                <i class="bi bi-check-circle-fill"></i>
+                <span>Finalizar Registro</span>
+              </button>
+              <a href="{% url 'lista_docentes' %}" class="btn btn-light border w-50 py-2 rounded-3 text-secondary fw-medium">
+                Cancelar
+              </a>
+            </div>
+
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* Personalización de campos de entrada */
+  .form-control, .form-select {
+    border-radius: 10px;
+    padding: 0.6rem 0.8rem;
+    font-size: 0.9rem;
+    border: 1px solid #e2e8f0;
+    transition: all 0.2s ease;
+  }
+
+  .form-control:focus, .form-select:focus {
+    background-color: #fff;
+    border-color: #cbd5e1;
+    box-shadow: 0 0 0 4px rgba(71, 85, 105, 0.05);
+    color: #1e293b;
+  }
+
+  .input-group-text {
+    border-radius: 10px;
+    border: 1px solid #e2e8f0;
+  }
+
+  /* Estilos para los mensajes de error de JQuery Validate */
+  .error {
+    color: #e63946;
+    font-size: 0.75rem;
+    margin-top: 4px;
+    font-weight: 500;
+  }
+  
+  input.error, select.error {
+    border-color: #fca5a5 !important;
+    background-color: #fff1f2 !important;
+  }
+</style>
+
+<script>
+$(document).ready(function() {
+  $("#frm_docente").validate({
+    errorElement: "div",
+    rules: {
+      nombre:{ required:true, minlength: 3 },
+      apellido:{ required:true, minlength: 3 },
+      cedula:{ required:true, digits: true, minlength: 10, maxlength: 10 },
+      correo:{ required:true, email:true },
+      carrera:{ required:true },
+      asignacion:{ required:true }
+    },
+    messages: {
+      nombre: "Por favor, ingrese los nombres.",
+      apellido: "Por favor, ingrese los apellidos.",
+      cedula: "Ingrese una cédula válida de 10 dígitos.",
+      correo: "Ingrese un correo institucional válido.",
+      carrera: "Debe seleccionar una carrera.",
+      asignacion: "Seleccione el tipo de asignación."
+    },
+    // Efecto visual al validar
+    highlight: function(element) {
+      $(element).addClass('error');
+    },
+    unhighlight: function(element) {
+      $(element).removeClass('error');
+    }
+  });
+});
+</script>
+{% endblock %}

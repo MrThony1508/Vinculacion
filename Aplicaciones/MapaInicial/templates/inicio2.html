@@ -1,0 +1,205 @@
+{% extends 'base.html' %}
+{% block contenido %}
+
+<style>
+    :root {
+        --utc-blue: #173D62;
+        --utc-celeste: #00BFFF;
+    }
+
+    .map-container {
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        border: 1px solid #e2e8f0;
+    }
+
+    .filter-card {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        margin-bottom: 30px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        border: 1px solid #edf2f7;
+    }
+
+    .custom-infowindow {
+        padding: 10px;
+        font-family: 'Inter', sans-serif;
+    }
+
+    .custom-infowindow h6 {
+        color: var(--utc-blue);
+        font-weight: 700;
+        margin-bottom: 8px;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 5px;
+    }
+
+    .badge-carrera {
+        background: var(--utc-blue);
+        color: white;
+        padding: 3px 8px;
+        border-radius: 5px;
+        font-size: 0.75rem;
+    }
+</style>
+
+<div class="container py-4">
+    <div class="text-center mb-5">
+        <h1 class="fw-800" style="color: var(--utc-blue);">
+            <i class="bi bi-geo-alt-fill text-danger me-2"></i>Geolocalización de Estudiantes
+        </h1>
+        <p class="text-muted">Visualiza la ubicación de los grupos de prácticas a nivel nacional</p>
+    </div>
+
+    <div class="filter-card fade-in">
+        <div class="row g-3">
+            <div class="col-md-4">
+                <label class="form-label fw-bold small text-uppercase text-muted">Carrera Académica</label>
+                <select id="carreraSelect" class="form-select shadow-sm border-0 bg-light">
+                    <option value="todas">Todas las carreras</option>
+                    <option value="Sistemas de información">Sistemas de información</option>
+                    <option value="Electromecánica">Electromecánica</option>
+                    <option value="Industrial">Industrial</option>
+                    <option value="Electricidad">Electricidad</option>
+                    <option value="Hidráulica">Hidráulica</option>
+                    <option value="Software">Software</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label fw-bold small text-uppercase text-muted">Modalidad de Práctica</label>
+                <select id="practicaSelect" class="form-select shadow-sm border-0 bg-light">
+                    <option value="todas">Todos los tipos</option>
+                    <option value="PPP">Prácticas pre-profesionales (PPP)</option>
+                    <option value="Servicio Comunitario">Servicio comunitario</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label fw-bold small text-uppercase text-muted">Búsqueda Rápida</label>
+                <div class="input-group">
+                    <span class="input-group-text border-0 bg-light"><i class="bi bi-search"></i></span>
+                    <input type="text" id="buscadorNombre" class="form-control shadow-sm border-0 bg-light" 
+                           placeholder="Nombre del estudiante...">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="map-container fade-in">
+        <div id="map" style="height: 600px; width: 100%;"></div>
+    </div>
+</div>
+
+{{ estudiantes|json_script:"estudiantes-data" }}
+
+<script>
+let map;
+let markers = [];
+const listaEstudiantes = JSON.parse(document.getElementById("estudiantes-data").textContent);
+
+// Colores según carrera para los pines
+const coloresCarrera = {
+    "Sistemas de información": "#1e40af", // Azul oscuro
+    "Software": "#3b82f6",                // Azul claro
+    "Electromecánica": "#dc2626",         // Rojo
+    "Industrial": "#059669",              // Verde
+    "Electricidad": "#d97706",            // Naranja
+    "Hidráulica": "#0891b2",              // Cyan
+    "todas": "#64748b"                    // Gris
+};
+
+function initMap() {
+    const centro = { lat: -0.9333, lng: -78.6167 }; // Latacunga
+
+    // Estilo personalizado para el mapa (más limpio)
+    const mapStyles = [
+        { "featureType": "poi", "stylers": [{ "visibility": "off" }] },
+        { "featureType": "transit", "stylers": [{ "visibility": "off" }] }
+    ];
+
+    map = new google.maps.Map(document.getElementById("map"), {
+        zoom: 13,
+        center: centro,
+        styles: mapStyles,
+        mapTypeControl: false,
+        streetViewControl: false,
+        fullscreenControl: true
+    });
+
+    function agregarMarcadores(filtroCarrera, filtroPractica, filtroNombre) {
+        markers.forEach(m => m.setMap(null));
+        markers = [];
+
+        listaEstudiantes.forEach(est => {
+            const lat = parseFloat(est.grupo__latitud);
+            const lng = parseFloat(est.grupo__longitud);
+            if (!lat || !lng) return;
+
+            // Lógica de filtrado
+            if (filtroCarrera !== 'todas' && est.carrera !== filtroCarrera) return;
+            if (filtroPractica !== 'todas' && est.tipo_practica !== filtroPractica) return;
+            if (filtroNombre && !`${est.nombre} ${est.apellido}`.toLowerCase().includes(filtroNombre.toLowerCase())) return;
+
+            const color = coloresCarrera[est.carrera] || coloresCarrera["todas"];
+            
+            // Usamos marcadores vectoriales nativos (más rápidos y limpios)
+            const marker = new google.maps.Marker({
+                position: { lat, lng },
+                map: map,
+                title: est.nombre,
+                icon: {
+                    path: google.maps.SymbolPath.BACKWARD_CLOSED_ARROW,
+                    fillColor: color,
+                    fillOpacity: 0.9,
+                    strokeWeight: 2,
+                    strokeColor: "#ffffff",
+                    scale: 7
+                },
+                animation: google.maps.Animation.DROP
+            });
+
+            const contentString = `
+                <div class="custom-infowindow">
+                    <h6><i class="bi bi-people-fill me-2"></i>${est.grupo__nombre || 'Grupo UTC'}</h6>
+                    <p class="mb-1 small"><strong>Estudiante:</strong> ${est.nombre} ${est.apellido}</p>
+                    <div class="mb-2"><span class="badge-carrera">${est.carrera}</span></div>
+                    <p class="mb-0 small text-muted"><i class="bi bi-tag-fill me-1"></i>${est.tipo_practica}</p>
+                </div>
+            `;
+
+            const infoWindow = new google.maps.InfoWindow({
+                content: contentString
+            });
+
+            marker.addListener('click', () => {
+                // Cerrar otros infowindows si se desea (opcional)
+                infoWindow.open(map, marker);
+            });
+
+            markers.push(marker);
+        });
+    }
+
+    // Inicializar marcadores
+    agregarMarcadores('todas', 'todas', '');
+
+    // Eventos
+    const inputs = ['carreraSelect', 'practicaSelect', 'buscadorNombre'];
+    inputs.forEach(id => {
+        document.getElementById(id).addEventListener(id === 'buscadorNombre' ? 'input' : 'change', () => {
+            agregarMarcadores(
+                document.getElementById('carreraSelect').value,
+                document.getElementById('practicaSelect').value,
+                document.getElementById('buscadorNombre').value
+            );
+        });
+    });
+}
+</script>
+
+<script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD0Ko6qUa0EFuDWr77BpNJOdxD-QLstjBk&libraries=places&callback=initMap">
+</script>
+
+{% endblock %}

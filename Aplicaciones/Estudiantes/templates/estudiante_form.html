@@ -1,0 +1,173 @@
+{% extends "docente.html" %}
+
+{% block contenido %}
+<div class="container animate-in">
+  <div class="row justify-content-center">
+    <div class="col-lg-10">
+      
+      <div class="mb-4">
+        <h4 class="fw-bold mb-1" style="color: #194077;">
+          <i class="bi bi-person-plus-fill me-2"></i>Registrar Nuevo Estudiante
+        </h4>
+        <p class="text-muted">Complete la información técnica del estudiante para las prácticas académicas.</p>
+      </div>
+
+      <div class="card shadow-sm border-0" style="border-radius: 15px;">
+        <div class="card-body p-4 p-md-5">
+          
+          <form action="{% url 'guardar_estudiante' %}" method="POST" id="frm_estudiante">
+            {% csrf_token %}
+
+            <div class="row g-4">
+              <div class="col-12">
+                <h6 class="text-uppercase fw-bold text-secondary mb-3" style="font-size: 0.8rem; letter-spacing: 1px;">
+                  Información Personal
+                </h6>
+                <hr class="mt-0 mb-4 opacity-10">
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Nombre</label>
+                <div class="input-group">
+                  <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-person"></i></span>
+                  <input type="text" name="nombre" class="form-control border-start-0" placeholder="Ej: Juan" required>
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Apellido</label>
+                <div class="input-group">
+                  <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-person"></i></span>
+                  <input type="text" name="apellido" class="form-control border-start-0" placeholder="Ej: Pérez" required>
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Cédula de Identidad</label>
+                <div class="input-group">
+                  <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-card-heading"></i></span>
+                  <input type="text" name="cedula" class="form-control border-start-0" placeholder="050xxxxxxx" required>
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Correo Institucional</label>
+                <div class="input-group">
+                  <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-envelope"></i></span>
+                  <input type="email" name="correo_institucional" class="form-control border-start-0" placeholder="juan.perez@utc.edu.ec" required>
+                </div>
+              </div>
+
+              <div class="col-12 mt-5">
+                <h6 class="text-uppercase fw-bold text-secondary mb-3" style="font-size: 0.8rem; letter-spacing: 1px;">
+                  Detalles Académicos y Prácticas
+                </h6>
+                <hr class="mt-0 mb-4 opacity-10">
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Carrera</label>
+                <div class="input-group">
+                  <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-mortarboard"></i></span>
+                  <select name="carrera" class="form-select border-start-0" required>
+                    <option value="" selected disabled>Seleccione una carrera...</option>
+                    <option value="Sistemas de información">Sistemas de información</option>
+                    <option value="Electromecánica">Electromecánica</option>
+                    <option value="Industrial">Industrial</option>
+                    <option value="Electricidad">Electricidad</option>
+                    <option value="Hidráulica">Hidráulica</option>
+                    <option value="Software">Software</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Tipo de Práctica</label>
+                <div class="input-group">
+                  <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-briefcase"></i></span>
+                  <input type="text" name="tipo_practica" class="form-control border-start-0" placeholder="Ej: Pre-profesionales" required>
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Semestre</label>
+                <div class="input-group">
+                  <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-layers"></i></span>
+                  <select name="semestre" class="form-select border-start-0" required>
+                    <option value="" selected disabled>Seleccione semestre...</option>
+                    <option value="Cuarto">Cuarto</option>
+                    <option value="Quinto">Quinto</option>
+                    <option value="Sexto">Sexto</option>
+                    <option value="Séptimo">Séptimo</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Periodo Académico</label>
+                <div class="input-group">
+                  <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-calendar-event"></i></span>
+                  <input type="text" name="periodo_academico" class="form-control border-start-0" placeholder="Ej: 2024 - 2025" required>
+                </div>
+              </div>
+            </div>
+
+            <div class="d-flex justify-content-end gap-3 mt-5">
+              <a href="{% url 'lista_estudiantes' %}" class="btn btn-light px-4 fw-semibold border" style="border-radius: 8px;">
+                Cancelar
+              </a>
+              <button type="submit" class="btn px-5 fw-bold text-white shadow-sm" 
+                      style="background-color: #194077; border-radius: 8px;">
+                <i class="bi bi-check-circle me-2"></i>Guardar Estudiante
+              </button>
+            </div>
+          </form>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* Mejora de la apariencia de los inputs al enfocarlos */
+  .form-control:focus, .form-select:focus {
+    border-color: #194077;
+    box-shadow: 0 0 0 0.25rem rgba(25, 64, 119, 0.1);
+  }
+  .input-group-text {
+    border-color: #dee2e6;
+  }
+</style>
+
+<script>
+  $("#frm_estudiante").validate({
+    errorClass: "text-danger small mt-1",
+    rules: {
+      nombre: { required: true },
+      apellido: { required: true },
+      cedula: { required: true, digits: true, minlength: 10, maxlength: 10 },
+      correo_institucional: { required: true, email: true },
+      carrera: { required: true },
+      tipo_practica: { required: true },
+      semestre: { required: true },
+      periodo_academico: { required: true }
+    },
+    messages: {
+      nombre: "El nombre es obligatorio",
+      apellido: "El apellido es obligatorio",
+      cedula: {
+        required: "La cédula es obligatoria",
+        digits: "Solo se permiten números",
+        minlength: "Debe tener 10 dígitos",
+        maxlength: "No puede exceder 10 dígitos"
+      },
+      correo_institucional: "Ingrese un correo institucional válido",
+      carrera: "Seleccione una carrera",
+      tipo_practica: "Especifique el tipo de práctica",
+      semestre: "Seleccione el semestre",
+      periodo_academico: "Ingrese el periodo"
+    }
+  });
+</script>
+{% endblock %}

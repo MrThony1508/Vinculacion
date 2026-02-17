@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}UTC | Dashboard Moderno{% endblock %}</title>
+
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-main: #f3f4f7;
+      --sidebar-bg: #1a1c23; /* Gris profundo elegante */
+      --sidebar-hover: #2d303e;
+      --text-muted: #94a3b8;
+      --accent-color: #475569;
+      --white: #ffffff;
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    body {
+      background-color: var(--bg-main);
+      font-family: 'Inter', sans-serif;
+      color: #334155;
+      overflow-x: hidden;
+    }
+
+    /* ANIMACIONES */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .animate-fade-in {
+      animation: fadeInUp 0.6s ease-out forwards;
+    }
+
+    /* BARRA SUPERIOR */
+    .topbar {
+      height: 75px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid #e2e8f0;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      padding: 0 40px;
+    }
+
+    .utc-logo {
+      height: 55px; /* Tamaño profesional */
+      width: auto;
+      transition: var(--transition);
+    }
+
+    .utc-logo:hover {
+      transform: scale(1.05); /* Pequeño pulso al pasar el mouse */
+    }
+
+    /* SIDEBAR */
+    .sidebar {
+      width: 280px;
+      background: var(--sidebar-bg);
+      min-height: 100vh;
+      position: fixed;
+      box-shadow: 4px 0 10px rgba(0,0,0,0.05);
+    }
+
+    .sidebar-header {
+      padding: 35px 25px;
+    }
+
+    .sidebar-header h5 {
+      color: var(--white);
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    .nav-link {
+      color: var(--text-muted);
+      padding: 12px 25px;
+      margin: 5px 18px;
+      border-radius: 10px;
+      font-size: 0.92rem;
+      font-weight: 500;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+    }
+
+    .nav-link i {
+      font-size: 1.2rem;
+      margin-right: 12px;
+    }
+
+    /* Animación hover en links */
+    .nav-link:hover {
+      background-color: var(--sidebar-hover);
+      color: var(--white);
+      transform: translateX(5px); /* Desplazamiento sutil */
+    }
+
+    .nav-link.active {
+      background-color: #334155;
+      color: var(--white);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+
+    /* CONTENEDOR PRINCIPAL */
+    .main-wrapper {
+      margin-left: 280px;
+      width: calc(100% - 280px);
+      min-height: 100vh;
+    }
+
+    .content {
+      padding: 40px;
+    }
+
+    .content-box {
+      background: var(--white);
+      border-radius: 16px;
+      padding: 35px;
+      border: 1px solid rgba(226, 232, 240, 0.8);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+    }
+
+    /* ESTILO DE TITULOS */
+    .content-header h4 {
+      font-weight: 800;
+      color: #1e293b;
+      margin-bottom: 30px;
+      letter-spacing: -0.5px;
+    }
+
+    /* BOTÓN DE PERFIL */
+    .profile-pill {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      padding: 6px 16px;
+      border-radius: 50px;
+      transition: var(--transition);
+    }
+
+    .profile-pill:hover {
+      background: #f1f5f9;
+      border-color: #cbd5e1;
+    }
+
+    .sidebar-divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+      margin: 20px 0;
+    }
+
+  </style>
+</head>
+
+<body>
+
+<div class="d-flex">
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <h5 class="mb-0"><i class="bi bi-grid-fill text-secondary me-2"></i> UTC PANEL</h5>
+      <small class="text-uppercase" style="color: #64748b; font-size: 0.7rem; font-weight: 700;">Gestión Administrativa</small>
+    </div>
+
+    <div class="sidebar-divider"></div>
+
+    <ul class="nav flex-column">
+      <li class="nav-item">
+        <a class="nav-link active" href="{% url 'dashboard' %}">
+          <i class="bi bi-house-door"></i> Inicio
+        </a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'lista_docentes' %}">
+          <i class="bi bi-person-badge"></i> Lista de Docentes
+        </a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'nuevo_docente' %}">
+          <i class="bi bi-plus-circle"></i> Registrar Nuevo
+        </a>
+      </li>
+
+      <div class="sidebar-divider"></div>
+
+      <li class="nav-item mt-auto">
+        <a class="nav-link text-warning" href="javascript:void(0);" onclick="confirmarCerrarSesion()" style="background: rgba(255, 193, 7, 0.05);">
+          <i class="bi bi-box-arrow-left"></i> Cerrar Sesión
+        </a>
+      </li>
+    </ul>
+  </aside>
+
+  <div class="main-wrapper">
+    
+    <header class="topbar d-flex align-items-center justify-content-between">
+      <div class="d-flex align-items-center gap-4">
+        <img src="https://redi.cedia.edu.ec/members/UTC.png" alt="UTC" class="utc-logo">
+        
+        <div class="d-none d-lg-block">
+          <h6 class="mb-0 fw-bold" style="color: #1e293b;">Sistema de Gestión de Docencia</h6>
+          <span class="text-muted small">Periodo Académico 2024 - 2025</span>
+        </div>
+      </div>
+
+      <div class="profile-pill d-flex align-items-center gap-3">
+        <div class="text-end d-none d-sm-block">
+          <div style="font-size: 0.85rem; font-weight: 700; color: #1e293b;">Admin. UTC</div>
+          <div style="font-size: 0.7rem; color: #64748b;">Administrador General</div>
+        </div>
+        <i class="bi bi-person-circle fs-3 text-secondary"></i>
+      </div>
+    </header>
+
+    <main class="content animate-fade-in">
+      <div class="content-header">
+        {% block titulo %}
+        <h4>Panel de Administración</h4>
+        {% endblock %}
+      </div>
+
+      <div class="content-box">
+        {% block contenido %}
+          <div class="text-center py-5">
+            <i class="bi bi-layers text-light mb-3" style="font-size: 4rem;"></i>
+            <h5 class="text-secondary">Bienvenido al Sistema Administrativo</h5>
+            <p class="text-muted mx-auto" style="max-width: 500px;">
+              Utilice el menú lateral para gestionar la información de los docentes y los registros institucionales de manera eficiente.
+            </p>
+          </div>
+        {% endblock %}
+      </div>
+    </main>
+
+  </div>
+</div>
+<script>
+  function confirmarCerrarSesion() {
+    Swal.fire({
+      title: '¿Cerrar Sesión?',
+      text: "Está a punto de salir del Panel Administrativo de la UTC.",
+      icon: 'warning',
+      showCancelButton: true,
+      // Color Gris Profundo del Sidebar para el botón cancelar
+      cancelButtonColor: '#1a1c23', 
+      // Color Rojo/Naranja para la acción de salir
+      confirmButtonColor: '#dc3545',
+      confirmButtonText: '<i class="bi bi-door-open-fill"></i> Sí, salir',
+      cancelButtonText: 'Permanecer aquí',
+      reverseButtons: true,
+      background: '#ffffff',
+      customClass: {
+        popup: 'rounded-4 shadow-lg border-0',
+        title: 'fw-bold text-dark'
+      }
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Redirige a la URL de logout de Django
+        window.location.href = "{% url 'logout' %}";
+      }
+    })
+  }
+</script>
+
+{% if messages %}
+  {% for mensaje in messages %}
+    <script>
+      Swal.fire({
+        title: "Operación Exitosa",
+        text: "{{ mensaje }}",
+        icon: "success",
+        showConfirmButton: false,
+        timer: 2500,
+        background: '#ffffff',
+        customClass: {
+          popup: 'rounded-4 shadow-lg border-0'
+        }
+      });
+    </script>
+  {% endfor %}
+{% endif %}
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

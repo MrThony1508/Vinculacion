@@ -1,0 +1,158 @@
+{% extends "admin.html" %}
+
+{% block contenido %}
+<div class="container-fluid animate-fade-in">
+  
+  <div class="mb-4 text-center">
+    <h4 class="fw-bold text-dark mb-1">Modificar Perfil de Docente</h4>
+    <p class="text-muted small">Actualice los datos institucionales o personales del catedrático.</p>
+  </div>
+
+  <div class="row justify-content-center">
+    <div class="col-lg-8 col-xl-7">
+      <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+        <div style="height: 4px; background: linear-gradient(90deg, #475569, #94a3b8);"></div>
+        
+        <div class="card-body p-4 p-md-5">
+          <form method="POST" action="{% url 'procesar_edicion_docente' %}" id="frm_editar_docente">
+            {% csrf_token %}
+            <input type="hidden" name="id" value="{{ docente.id }}">
+
+            <div class="row mb-4">
+              <div class="col-12 mb-3">
+                <label class="form-label fw-bold text-secondary small text-uppercase">Datos de Identificación</label>
+                <hr class="mt-0 opacity-10">
+              </div>
+              
+              <div class="col-md-6 mb-3">
+                <label class="form-label small fw-semibold">Nombres</label>
+                <div class="input-group">
+                  <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-person-gear"></i></span>
+                  <input type="text" name="nombre" class="form-control border-start-0 ps-0" value="{{ docente.nombre }}">
+                </div>
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label class="form-label small fw-semibold">Apellidos</label>
+                <div class="input-group">
+                  <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-person-gear"></i></span>
+                  <input type="text" name="apellido" class="form-control border-start-0 ps-0" value="{{ docente.apellido }}">
+                </div>
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label class="form-label small fw-semibold">Cédula</label>
+                <div class="input-group">
+                  <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-shield-lock"></i></span>
+                  <input type="text" name="cedula" class="form-control border-start-0 ps-0" value="{{ docente.cedula }}">
+                </div>
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label class="form-label small fw-semibold">Correo Institucional</label>
+                <div class="input-group">
+                  <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-envelope-at"></i></span>
+                  <input type="email" name="correo" class="form-control border-start-0 ps-0" value="{{ docente.correo_institucional }}">
+                </div>
+              </div>
+            </div>
+
+            <div class="row mb-5">
+              <div class="col-12 mb-3">
+                <label class="form-label fw-bold text-secondary small text-uppercase">Ubicación Académica</label>
+                <hr class="mt-0 opacity-10">
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label class="form-label small fw-semibold">Carrera</label>
+                <select name="carrera" class="form-select bg-light border-0 py-2">
+                  <option value="">Seleccione carrera...</option>
+                  <option value="Sistemas de información" {% if docente.carrera == "Sistemas de información" %}selected{% endif %}>Sistemas de información</option>
+                  <option value="Electromecánica" {% if docente.carrera == "Electromecánica" %}selected{% endif %}>Electromecánica</option>
+                  <option value="Industrial" {% if docente.carrera == "Industrial" %}selected{% endif %}>Industrial</option>
+                  <option value="Electricidad" {% if docente.carrera == "Electricidad" %}selected{% endif %}>Electricidad</option>
+                  <option value="Hidráulica" {% if docente.carrera == "Hidráulica" %}selected{% endif %}>Hidráulica</option>
+                  <option value="Software" {% if docente.carrera == "Software" %}selected{% endif %}>Software</option>
+                </select>
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label class="form-label small fw-semibold">Asignación</label>
+                <select name="asignacion" class="form-select bg-light border-0 py-2">
+                  <option value="">Seleccione asignación...</option>
+                  <option value="PPP" {% if docente.asignacion == "PPP" %}selected{% endif %}>PPP - Prácticas Preprofesionales</option>
+                  <option value="Servicio Comunitario" {% if docente.asignacion == "Servicio Comunitario" %}selected{% endif %}>Servicio Comunitario</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="d-flex gap-3 pt-3">
+              <button type="submit" class="btn btn-dark w-100 py-2 rounded-3 shadow-sm d-flex align-items-center justify-content-center gap-2" style="background-color: #334155; border: none;">
+                <i class="bi bi-cloud-arrow-up-fill"></i>
+                <span>Guardar Cambios</span>
+              </button>
+              <a href="{% url 'lista_docentes' %}" class="btn btn-outline-light border w-50 py-2 rounded-3 text-secondary fw-medium">
+                Volver
+              </a>
+            </div>
+
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .form-control, .form-select {
+    border-radius: 10px;
+    padding: 0.6rem 0.8rem;
+    font-size: 0.9rem;
+    border: 1px solid #e2e8f0;
+    transition: all 0.25s ease;
+  }
+
+  .form-control:focus {
+    background-color: #fff;
+    border-color: #94a3b8;
+    box-shadow: 0 0 0 4px rgba(148, 163, 184, 0.1);
+  }
+
+  .input-group-text {
+    border-radius: 10px;
+    border: 1px solid #e2e8f0;
+    font-size: 1.1rem;
+  }
+
+  .error {
+    color: #dc3545;
+    font-size: 0.75rem;
+    margin-top: 5px;
+    display: block;
+  }
+</style>
+
+<script>
+$(document).ready(function() {
+  $("#frm_editar_docente").validate({
+    errorElement: "span",
+    rules: {
+      nombre: { required: true, minlength: 2 },
+      apellido: { required: true, minlength: 2 },
+      cedula: { required: true, digits: true, minlength: 10, maxlength: 10 },
+      correo: { required: true, email: true },
+      carrera: { required: true },
+      asignacion: { required: true }
+    },
+    messages: {
+      nombre: "Ingrese los nombres completos.",
+      apellido: "Ingrese los apellidos completos.",
+      cedula: "Cédula inválida (10 dígitos).",
+      correo: "Use un formato de correo institucional.",
+      carrera: "Campo obligatorio.",
+      asignacion: "Campo obligatorio."
+    }
+  });
+});
+</script>
+{% endblock %}

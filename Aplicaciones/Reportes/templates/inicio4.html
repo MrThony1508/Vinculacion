@@ -1,0 +1,159 @@
+{% extends 'base.html' %}
+{% block contenido %}
+
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<style>
+    :root { --utc-dark: #173D62; --utc-blue: #00BFFF; --bg-body: #f0f2f5; }
+    body { background-color: var(--bg-body); font-family: 'Inter', sans-serif; }
+    .report-card { border: none; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); background: #fff; }
+    .kpi-box { padding: 1.5rem; border-radius: 16px; background: #fff; border-left: 6px solid var(--utc-blue); height: 100%; }
+    .kpi-title { font-size: 0.85rem; font-weight: 700; color: #6c757d; text-transform: uppercase; }
+    .kpi-value { font-size: 1.8rem; font-weight: 800; color: var(--utc-dark); }
+    .chart-title { font-weight: 700; color: var(--utc-dark); margin-bottom: 1.5rem; border-bottom: 2px solid #f0f0f0; padding-bottom: 10px; }
+</style>
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-0" style="color: var(--utc-dark);">Panel de Control Académico</h2>
+            <p class="text-muted">Análisis estadístico de carreras y docentes</p>
+        </div>
+        <button onclick="window.print()" class="btn btn-dark px-4 shadow-sm"><i class="fas fa-print me-2"></i>Imprimir Reporte</button>
+    </div>
+
+    <div class="row g-3 mb-4 text-center">
+        <div class="col-md-3"><div class="kpi-box"><div class="kpi-title">Total Docentes</div><div class="kpi-value">{{ docentes|length }}</div></div></div>
+        <div class="col-md-3"><div class="kpi-box" style="border-left-color: var(--utc-dark);"><div class="kpi-title">Carreras Activas</div><div class="kpi-value">{{ carreras|length }}</div></div></div>
+        <div class="col-md-3"><div class="kpi-box" style="border-left-color: #2ecc71;"><div class="kpi-title">Estudiantes Totales</div><div id="totalEstudiantesKpi" class="kpi-value">0</div></div></div>
+        <div class="col-md-3"><div class="kpi-box" style="border-left-color: #f1c40f;"><div class="kpi-title">Tasa de Gestión</div><div id="eficienciaKpi" class="kpi-value">0%</div></div></div>
+    </div>
+
+    <div id="data-store" style="display: none;">
+        {% for c in carreras %}
+            <span class="carrera-item" 
+                  data-nombre="{{ c.carrera|escapejs }}" 
+                  data-total="{{ c.total_estudiantes|default:0 }}"
+                  data-ppp="{{ c.ppp|default:0 }}"
+                  data-serv="{{ c.servicio_comunitario|default:0 }}"></span>
+        {% endfor %}
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-5">
+            <div class="card report-card h-100 p-4">
+                <h6 class="chart-title"><i class="fas fa-chart-pie me-2 text-primary"></i>Distribución de Estudiantes por Carrera</h6>
+                <div style="height: 320px;"><canvas id="graficoCarreras"></canvas></div>
+            </div>
+        </div>
+
+        <div class="col-lg-7">
+            <div class="card report-card h-100 p-4">
+                <h6 class="chart-title"><i class="fas fa-table me-2 text-primary"></i>Carga de Estudiantes por Docente</h6>
+                <div class="table-responsive">
+                    <table id="tablaDocentes" class="table table-hover align-middle w-100">
+                        <thead>
+                            <tr>
+                                <th>Nombre del Docente</th>
+                                <th>Carrera</th>
+                                <th class="text-center">Cant. Estudiantes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for d in docentes %}
+                            <tr>
+                                <td><strong>{{ d.nombre }} {{ d.apellido }}</strong></td>
+                                <td><span class="badge bg-light text-dark border">{{ d.carrera }}</span></td>
+                                <td class="text-center fw-bold text-primary">{{ d.total_estudiantes }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+  
+</div>
+
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+
+<script>
+$(document).ready(function() {
+    const datosCarreras = [];
+    $('.carrera-item').each(function() {
+        datosCarreras.push({
+            nombre: $(this).data('nombre'),
+            total: parseInt($(this).data('total')),
+            ppp: parseInt($(this).data('ppp')),
+            serv: parseInt($(this).data('serv'))
+        });
+    });
+
+    let totalEst = 0;
+    let totalGestion = 0;
+    datosCarreras.forEach(c => {
+        totalEst += c.total;
+        totalGestion += (c.ppp + c.serv);
+    });
+    $('#totalEstudiantesKpi').text(totalEst);
+    $('#eficienciaKpi').text((totalEst > 0 ? Math.round((totalGestion / totalEst) * 100) : 0) + '%');
+
+    // CONFIGURACIÓN DE TABLA EN ESPAÑOL
+    if ($('#tablaDocentes').length) {
+        $('#tablaDocentes').DataTable({
+            language: {
+                "sProcessing":     "Procesando...",
+                "sLengthMenu":     "Mostrar _MENU_ registros",
+                "sZeroRecords":    "No se encontraron resultados",
+                "sEmptyTable":     "Ningún dato disponible en esta tabla",
+                "sInfo":           "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+                "sInfoEmpty":      "Mostrando registros del 0 al 0 de un total de 0 registros",
+                "sInfoFiltered":   "(filtrado de un total de _MAX_ registros)",
+                "sSearch":         "Buscar:",
+                "sInfoThousands":  ",",
+                "sLoadingRecords": "Cargando...",
+                "oPaginate": {
+                    "sFirst":    "Primero",
+                    "sLast":     "Último",
+                    "sNext":     "Siguiente",
+                    "sPrevious": "Anterior"
+                }
+            },
+            pageLength: 5, 
+            lengthChange: false, 
+            info: true 
+        });
+    }
+
+    // GRÁFICO CIRCULAR
+    const ctxDona = document.getElementById('graficoCarreras');
+    if (ctxDona) {
+        new Chart(ctxDona, {
+            type: 'doughnut',
+            data: {
+                labels: datosCarreras.map(d => d.nombre),
+                datasets: [{
+                    label: 'Total Estudiantes',
+                    data: datosCarreras.map(d => d.total),
+                    backgroundColor: ['#173D62', '#00BFFF', '#2ecc71', '#f1c40f', '#e74c3c', '#9b59b6'],
+                    borderWidth: 2
+                }]
+            },
+            options: { 
+                maintainAspectRatio: false,
+                plugins: { legend: { position: 'bottom' } },
+                cutout: '65%' 
+            }
+        });
+    }
+
+    
+});
+</script>
+{% endblock %}

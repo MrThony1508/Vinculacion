@@ -1,0 +1,340 @@
+{% extends 'base.html' %}
+{% block contenido %}
+
+<style>
+    :root {
+        --utc-blue: #173D62;
+        --utc-celeste: #00BFFF;
+        --utc-gold: #BBA48B;
+        --bg-light: #f8fafc;
+        --transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    }
+
+    body { background-color: var(--bg-light); font-family: 'Inter', sans-serif; }
+
+    /* HERO SECTION */
+    .hero-wrapper {
+        position: relative;
+        height: 85vh;
+        min-height: 500px;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .hero-img {
+        position: absolute;
+        top: 0; left: 0; width: 100%; height: 100%;
+        object-fit: cover;
+        z-index: -1;
+        animation: slowZoom 20s infinite alternate;
+        filter: brightness(0.7);
+    }
+
+    @keyframes slowZoom {
+        from { transform: scale(1); }
+        to { transform: scale(1.1); }
+    }
+
+    .hero-content {
+        text-align: center;
+        color: white;
+        z-index: 2;
+        padding-bottom: 100px;
+    }
+
+    .hero-content h1 {
+        font-weight: 800;
+        font-size: 3.5rem;
+        text-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    }
+
+    /* TARJETAS FLOTANTES (PPP, VINCULACIÓN, PSC) */
+    .floating-cards {
+        display: flex;
+        justify-content: center;
+        gap: 30px;
+        margin-top: -80px;
+        position: relative;
+        z-index: 10;
+        padding: 0 20px;
+    }
+
+    .info-card {
+        background: white;
+        width: 320px;
+        padding: 35px 25px;
+        border-radius: 20px;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        text-align: center;
+        transition: var(--transition);
+        border-bottom: 5px solid transparent;
+    }
+
+    .info-card:hover {
+        transform: translateY(-15px);
+        box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+    }
+
+    .info-card i {
+        font-size: 2.5rem;
+        margin-bottom: 20px;
+        display: block;
+    }
+
+    .card-ppp { border-color: var(--utc-gold); }
+    .card-ppp i { color: var(--utc-gold); }
+    
+    .card-vinculacion { border-color: var(--utc-blue); }
+    .card-vinculacion i { color: var(--utc-blue); }
+    
+    .card-psc { border-color: var(--utc-celeste); }
+    .card-psc i { color: var(--utc-celeste); }
+
+    /* SECCIÓN AUTORIDADES (Grid Limpio en lugar de Pentágono) */
+    .section-padding { padding: 100px 0; }
+    
+    .section-title {
+        text-align: center;
+        margin-bottom: 60px;
+    }
+    
+    .section-title h2 {
+        font-weight: 800;
+        color: var(--utc-blue);
+        position: relative;
+        display: inline-block;
+        padding-bottom: 15px;
+    }
+
+    .section-title h2::after {
+        content: '';
+        position: absolute;
+        width: 60%;
+        height: 4px;
+        background: var(--utc-celeste);
+        bottom: 0; left: 20%;
+        border-radius: 2px;
+    }
+
+    .auth-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 40px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .auth-card {
+        text-align: center;
+        transition: var(--transition);
+    }
+
+    .auth-img-wrapper {
+        position: relative;
+        width: 200px;
+        height: 200px;
+        margin: 0 auto 20px;
+    }
+
+    .auth-img-wrapper img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 50%;
+        border: 4px solid white;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        transition: var(--transition);
+    }
+
+    .auth-card:hover img {
+        transform: scale(1.05);
+        border-color: var(--utc-celeste);
+    }
+
+    .auth-info h5 {
+        color: var(--utc-blue);
+        font-weight: 700;
+        margin-bottom: 5px;
+        font-size: 1.1rem;
+    }
+
+    .auth-info span {
+        font-size: 0.85rem;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    /* MISIÓN Y VISIÓN */
+    .mision-vision-container {
+        background: white;
+        border-radius: 30px;
+        overflow: hidden;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .mv-box {
+        flex: 1;
+        padding: 60px;
+        min-width: 300px;
+    }
+
+    .mv-box:first-child { background-color: var(--utc-blue); color: white; }
+    .mv-box h3 { font-weight: 800; margin-bottom: 20px; }
+    .mv-box p { line-height: 1.8; opacity: 0.9; text-align: justify; }
+
+    /* ANIMACIONES */
+    .fade-up {
+        opacity: 0;
+        transform: translateY(40px);
+        transition: all 0.8s ease-out;
+    }
+    .fade-up.visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+</style>
+
+<section class="hero-wrapper">
+    <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhfESrtUE5wxGZeGFraGF_gX6NuXWs8XL28xpfCB2mJcnyCzuZzkv5Glu3jy5_ypOteyznTZe5aMiCdjMagSiBjqz5BoVAivsUu_h5OUyR418WT4k3vvFs2OP8SC_SXHlgUEUEQzlyzGerJZsdKXjH28UkqNYRgG2jq10TBy-W5q7DiAFpoz5-RVFsuXiO4/s4608/DJI_0894.jpg" class="hero-img" alt="UTC Campus">
+    <div class="hero-content" data-aos="fade-zoom-in">
+        <h1>VINCULACIÓN UTC</h1>
+        <p class="fs-4 fw-light">Comprometidos con la transformación social y académica</p>
+    </div>
+</section>
+
+<section class="container">
+    <div class="floating-cards">
+        <div class="info-card card-ppp fade-up">
+            <i class="fas fa-briefcase"></i>
+            <h5 class="fw-bold">PPP</h5>
+            <p class="small text-muted">Prácticas Pre Profesionales: Experiencia práctica en tu área profesional antes de titularte.</p>
+        </div>
+        <div class="info-card card-vinculacion fade-up">
+            <i class="fas fa-handshake"></i>
+            <h5 class="fw-bold">Vinculación</h5>
+            <p class="small text-muted">Actividades que conectan la universidad con la comunidad y el entorno social.</p>
+        </div>
+        <div class="info-card card-psc fade-up">
+            <i class="fas fa-users"></i>
+            <h5 class="fw-bold">PSC</h5>
+            <p class="small text-muted">Prácticas de Servicio Comunitario: Contribución directa a proyectos sociales.</p>
+        </div>
+    </div>
+</section>
+
+<section class="container section-padding">
+    <div class="section-title fade-up">
+      <img src="https://investigacion.utc.edu.ec/public/site/images/prospectivas/UTC.png" alt="Logo UTC" style="height:80px; margin-bottom: 20px;">
+      <h2>AUTORIDADES INSTITUCIONALES</h2>
+    </div>
+
+    <div class="auth-grid">
+        <div class="auth-card fade-up" style="grid-column: 1 / -1; margin-bottom: 30px;">
+            <div class="auth-img-wrapper">
+                <img src="https://ciya.utc.edu.ec/assets/presentacion/images/IDALIA-PACHECO.png" alt="Dra. Idalia Pacheco">
+            </div>
+            <div class="auth-info">
+                <h5>Dra. Idalia Pacheco</h5>
+                <span>Rectora</span>
+            </div>
+        </div>
+
+        <div class="auth-card fade-up">
+            <div class="auth-img-wrapper">
+                <img src="https://ciya.utc.edu.ec/assets/presentacion/images/MAYRA-ALBAN.png" alt="Dra. Mayra Albán">
+            </div>
+            <div class="auth-info">
+                <h5>Dra. Mayra Albán</h5>
+                <span>Vicerrectora Académica</span>
+            </div>
+        </div>
+        <div class="auth-card fade-up">
+            <div class="auth-img-wrapper">
+                <img src="https://ciya.utc.edu.ec/assets/presentacion/images/PATRICIO-BASTIDAS.png" alt="MSc. Patricio Bastidas">
+            </div>
+            <div class="auth-info">
+                <h5>MSc. Patricio Bastidas</h5>
+                <span>Vicerrector Administrativo</span>
+            </div>
+        </div>
+        <div class="auth-card fade-up">
+            <div class="auth-img-wrapper">
+                <img src="https://ciya.utc.edu.ec/assets/presentacion/images/MAURO-ALBARRACIN.png" alt="Mag. Mauro Albarracín">
+            </div>
+            <div class="auth-info">
+                <h5>Mag. Mauro Albarracín</h5>
+                <span>Decano CIYA</span>
+            </div>
+        </div>
+        <div class="auth-card fade-up">
+            <div class="auth-img-wrapper">
+                <img src="https://ciya.utc.edu.ec/assets/presentacion/images/javier_espin.png" alt="MSc. Javier Espín">
+            </div>
+            <div class="auth-info">
+                <h5>MSc. Javier Espín</h5>
+                <span>Director Académico</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="container section-padding bg-white shadow-sm rounded-5 mb-5">
+    <div class="section-title fade-up">
+        <h2>GESTIÓN DE VINCULACIÓN</h2>
+    </div>
+    
+    <div class="row justify-content-center gap-5 mb-5">
+        <div class="col-md-4 auth-card fade-up">
+            <div class="auth-img-wrapper">
+                <img src="https://0.academia-photos.com/206646953/67009899/55370590/s200_vladimir_marconi.ortiz_bustamante.png" alt="Mgtr. Vladimir Ortiz">
+            </div>
+            <div class="auth-info">
+                <h5>Mgtr. Vladimir Ortiz</h5>
+                <span>Director General de Vinculación</span>
+            </div>
+        </div>
+        <div class="col-md-4 auth-card fade-up">
+            <div class="auth-img-wrapper">
+                <img src="https://ciya.utc.edu.ec/assets/presentacion/images/EDWIN-MOREANO.png" alt="MSc. Edwin Moreano">
+            </div>
+            <div class="auth-info">
+                <h5>MSc. Edwin Moreano</h5>
+                <span>Director de Vinculación</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="mision-vision-container fade-up mx-3">
+        <div class="mv-box">
+            <h3><i class="bi bi-bullseye me-2"></i>Misión</h3>
+            <p>La UTC forma profesionales humanistas y de calidad, capaces de generar conocimiento científico a través de la investigación y vinculación, contribuyendo a la transformación social y económica del país.</p>
+        </div>
+        <div class="mv-box" style="background: #f1f5f9; color: var(--utc-blue);">
+            <h3><i class="bi bi-eye-fill me-2"></i>Visión</h3>
+            <p>La UTC será una universidad innovadora, científica y eficiente, comprometida con la calidad y pertinencia para alcanzar una sociedad equitativa, inclusiva y colaborativa.</p>
+        </div>
+    </div>
+</section>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const observerOptions = { threshold: 0.15 };
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, observerOptions);
+
+    document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+});
+</script>
+
+{% endblock %}

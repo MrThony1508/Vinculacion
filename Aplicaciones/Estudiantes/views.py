@@ -240,3 +240,29 @@ def detalle_grupo(request, grupo_id):
         'estudiantes_disponibles': estudiantes_disponibles,
         'estudiantes_grupo': estudiantes_grupo
     })
+from django.http import JsonResponse
+def validar_cedula_estudiante_unica(request):
+    cedula = request.GET.get('cedula', None)
+    estudiante_id = request.GET.get('estudiante_id', None)
+    
+    # Filtramos por cédula
+    existe = Estudiante.objects.filter(cedula=cedula)
+    
+    # Si estamos editando, excluimos al estudiante actual de la búsqueda
+    if estudiante_id:
+        existe = existe.exclude(id=estudiante_id)
+        
+    # Retorna True si está disponible, False si ya existe
+    return JsonResponse(not existe.exists(), safe=False)
+
+def validar_correo_estudiante_unico(request):
+    correo = request.GET.get('correo', None)
+    estudiante_id = request.GET.get('estudiante_id', None)
+    
+    # Filtramos por correo institucional
+    existe = Estudiante.objects.filter(correo_institucional=correo)
+    
+    if estudiante_id:
+        existe = existe.exclude(id=estudiante_id)
+        
+    return JsonResponse(not existe.exists(), safe=False)

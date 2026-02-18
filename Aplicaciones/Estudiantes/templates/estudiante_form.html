@@ -17,6 +17,8 @@
           
           <form action="{% url 'guardar_estudiante' %}" method="POST" id="frm_estudiante">
             {% csrf_token %}
+            
+            <input type="hidden" id="estudiante_id" name="id" value="{{ estudiante.id|default:'' }}">
 
             <div class="row g-4">
               <div class="col-12">
@@ -30,7 +32,7 @@
                 <label class="form-label fw-semibold">Nombre</label>
                 <div class="input-group">
                   <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-person"></i></span>
-                  <input type="text" name="nombre" class="form-control border-start-0" placeholder="Ej: Juan" required>
+                  <input type="text" name="nombre" class="form-control border-start-0" placeholder="Ej: Juan" value="{{ estudiante.nombre }}" required>
                 </div>
               </div>
 
@@ -38,7 +40,7 @@
                 <label class="form-label fw-semibold">Apellido</label>
                 <div class="input-group">
                   <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-person"></i></span>
-                  <input type="text" name="apellido" class="form-control border-start-0" placeholder="Ej: Pérez" required>
+                  <input type="text" name="apellido" class="form-control border-start-0" placeholder="Ej: Pérez" value="{{ estudiante.apellido }}" required>
                 </div>
               </div>
 
@@ -46,7 +48,7 @@
                 <label class="form-label fw-semibold">Cédula de Identidad</label>
                 <div class="input-group">
                   <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-card-heading"></i></span>
-                  <input type="text" name="cedula" class="form-control border-start-0" placeholder="050xxxxxxx" required>
+                  <input type="text" id="cedula" name="cedula" class="form-control border-start-0" placeholder="050xxxxxxx" value="{{ estudiante.cedula }}" required>
                 </div>
               </div>
 
@@ -54,7 +56,7 @@
                 <label class="form-label fw-semibold">Correo Institucional</label>
                 <div class="input-group">
                   <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-envelope"></i></span>
-                  <input type="email" name="correo_institucional" class="form-control border-start-0" placeholder="juan.perez@utc.edu.ec" required>
+                  <input type="email" id="correo_institucional" name="correo_institucional" class="form-control border-start-0" placeholder="juan.perez@utc.edu.ec" value="{{ estudiante.correo_institucional }}" required>
                 </div>
               </div>
 
@@ -71,15 +73,16 @@
                   <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-mortarboard"></i></span>
                   <select name="carrera" class="form-select border-start-0" required>
                     <option value="" selected disabled>Seleccione una carrera...</option>
-                    <option value="Sistemas de información">Sistemas de información</option>
-                    <option value="Electromecánica">Electromecánica</option>
-                    <option value="Industrial">Industrial</option>
-                    <option value="Electricidad">Electricidad</option>
-                    <option value="Hidráulica">Hidráulica</option>
-                    <option value="Software">Software</option>
+                    <option value="Sistemas de información" {% if estudiante.carrera == "Sistemas de información" %}selected{% endif %}>Sistemas de información</option>
+                    <option value="Electromecánica" {% if estudiante.carrera == "Electromecánica" %}selected{% endif %}>Electromecánica</option>
+                    <option value="Industrial" {% if estudiante.carrera == "Industrial" %}selected{% endif %}>Industrial</option>
+                    <option value="Electricidad" {% if estudiante.carrera == "Electricidad" %}selected{% endif %}>Electricidad</option>
+                    <option value="Hidráulica" {% if estudiante.carrera == "Hidráulica" %}selected{% endif %}>Hidráulica</option>
+                    <option value="Software" {% if estudiante.carrera == "Software" %}selected{% endif %}>Software</option>
                   </select>
                 </div>
               </div>
+
               <div class="col-md-6 ">
                   <label class="form-label small fw-semibold">Asignación de Prácticas</label>
                   <div class="input-group">
@@ -88,8 +91,8 @@
                       </span>
                       <select name="tipo_practica" class="form-select border-start-0 ps-0" required>
                           <option value="" selected disabled>Seleccione una opción...</option>
-                          <option value="PPP">PPP - Prácticas Preprofesionales</option>
-                          <option value="Servicio Comunitario">Servicio Comunitario</option>
+                          <option value="PPP" {% if estudiante.tipo_practica == "PPP" %}selected{% endif %}>PPP - Prácticas Preprofesionales</option>
+                          <option value="Servicio Comunitario" {% if estudiante.tipo_practica == "Servicio Comunitario" %}selected{% endif %}>Servicio Comunitario</option>
                       </select>
                   </div>
               </div>
@@ -100,10 +103,10 @@
                   <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-layers"></i></span>
                   <select name="semestre" class="form-select border-start-0" required>
                     <option value="" selected disabled>Seleccione semestre...</option>
-                    <option value="Cuarto">Cuarto</option>
-                    <option value="Quinto">Quinto</option>
-                    <option value="Sexto">Sexto</option>
-                    <option value="Séptimo">Séptimo</option>
+                    <option value="Cuarto" {% if estudiante.semestre == "Cuarto" %}selected{% endif %}>Cuarto</option>
+                    <option value="Quinto" {% if estudiante.semestre == "Quinto" %}selected{% endif %}>Quinto</option>
+                    <option value="Sexto" {% if estudiante.semestre == "Sexto" %}selected{% endif %}>Sexto</option>
+                    <option value="Séptimo" {% if estudiante.semestre == "Séptimo" %}selected{% endif %}>Séptimo</option>
                   </select>
                 </div>
               </div>
@@ -112,7 +115,7 @@
                 <label class="form-label fw-semibold">Periodo Académico</label>
                 <div class="input-group">
                   <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-calendar-event"></i></span>
-                  <input type="text" name="periodo_academico" class="form-control border-start-0" placeholder="Ej: 2024 - 2025" required>
+                  <input type="text" name="periodo_academico" class="form-control border-start-0" placeholder="Ej: 2024 - 2025" value="{{ estudiante.periodo_academico }}" required>
                 </div>
               </div>
             </div>
@@ -135,7 +138,6 @@
 </div>
 
 <style>
-  /* Mejora de la apariencia de los inputs al enfocarlos */
   .form-control:focus, .form-select:focus {
     border-color: #194077;
     box-shadow: 0 0 0 0.25rem rgba(25, 64, 119, 0.1);
@@ -151,8 +153,31 @@
     rules: {
       nombre: { required: true },
       apellido: { required: true },
-      cedula: { required: true, digits: true, minlength: 10, maxlength: 10 },
-      correo_institucional: { required: true, email: true },
+      cedula: { 
+        required: true, 
+        digits: true, 
+        minlength: 10, 
+        maxlength: 10,
+        remote: {
+          url: "{% url 'validar_cedula_estudiante' %}",
+          type: "get",
+          data: {
+            estudiante_id: function() { return $("#estudiante_id").val(); }
+          }
+        }
+      },
+      correo_institucional: { 
+        required: true, 
+        email: true,
+        remote: {
+          url: "{% url 'validar_correo_estudiante' %}",
+          type: "get",
+          data: {
+            correo: function() { return $("#correo_institucional").val(); },
+            estudiante_id: function() { return $("#estudiante_id").val(); }
+          }
+        }
+      },
       carrera: { required: true },
       tipo_practica: { required: true },
       semestre: { required: true },
@@ -165,9 +190,14 @@
         required: "La cédula es obligatoria",
         digits: "Solo se permiten números",
         minlength: "Debe tener 10 dígitos",
-        maxlength: "No puede exceder 10 dígitos"
+        maxlength: "No puede exceder 10 dígitos",
+        remote: "Esta cédula ya está registrada"
       },
-      correo_institucional: "Ingrese un correo institucional válido",
+      correo_institucional: {
+        required: "El correo es obligatorio",
+        email: "Ingrese un correo válido",
+        remote: "Este correo ya está en uso"
+      },
       carrera: "Seleccione una carrera",
       tipo_practica: "Especifique el tipo de práctica",
       semestre: "Seleccione el semestre",

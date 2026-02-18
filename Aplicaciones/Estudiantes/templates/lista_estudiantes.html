@@ -1,6 +1,19 @@
 {% extends "docente.html" %}
 
 {% block contenido %}
+<link rel="stylesheet" href="https://cdn.datatables.net/2.3.1/css/dataTables.dataTables.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.2.0/css/buttons.dataTables.min.css">
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.datatables.net/2.3.1/js/dataTables.min.js"></script>
+
+<script src="https://cdn.datatables.net/buttons/3.2.0/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.2.0/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.2.0/js/buttons.print.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+
 <div class="container-fluid animate-in">
 
   <div class="d-flex justify-content-between align-items-center mb-4">
@@ -18,10 +31,9 @@
   </div>
 
   <div class="card border-0 shadow-sm" style="border-radius: 15px; overflow: hidden;">
-    <div class="card-body p-0">
+    <div class="card-body p-4"> 
       <div class="table-responsive">
         <table id="tb_estudiantes" class="table table-hover align-middle mb-0">
-          
           <thead style="background-color: #f8f9fa; border-bottom: 2px solid #dee2e6;">
             <tr class="text-secondary small text-uppercase fw-bold">
               <th class="ps-4 py-3">Estudiante</th>
@@ -30,10 +42,9 @@
               <th class="text-center">Tipo Práctica</th>
               <th class="text-center">Semestre</th>
               <th class="text-center">Periodo</th>
-              <th class="text-center pe-4">Acciones</th>
+              <th class="text-center pe-4 no-export">Acciones</th>
             </tr>
           </thead>
-
           <tbody class="border-top-0">
             {% for e in estudiantes %}
             <tr>
@@ -45,11 +56,10 @@
                   </div>
                   <div>
                     <span class="d-block fw-bold text-dark">{{ e.nombre }} {{ e.apellido }}</span>
-                    <small class="text-muted">ID: {{ e.id }}</small>
+                    <small class="text-muted">Cédula: {{ e.cedula }}</small>
                   </div>
                 </div>
               </td>
-
               <td class="text-center">
                 {% if e.grupo %}
                   <span class="badge rounded-pill bg-info-subtle text-info border border-info-subtle px-3">
@@ -59,80 +69,51 @@
                   <span class="badge rounded-pill bg-light text-muted border px-3">Sin grupo</span>
                 {% endif %}
               </td>
-
               <td class="text-center small">{{ e.carrera }}</td>
               <td class="text-center small">{{ e.tipo_practica }}</td>
               <td class="text-center small">{{ e.semestre }}</td>
               <td class="text-center small">{{ e.periodo_academico }}</td>
-
               <td class="text-center pe-4">
                 <div class="btn-group" role="group">
-                  <a href="{% url 'editar_estudiante' e.id %}"
-                     class="btn btn-sm shadow-sm me-2"
-                     title="Editar Estudiante"
-                     style="background-color:#FF6B35; color:#fff; border-radius: 6px;">
+                  <a href="{% url 'editar_estudiante' e.id %}" class="btn btn-sm shadow-sm me-2" style="background-color:#FF6B35; color:#fff; border-radius: 6px;">
                     <i class="bi bi-pencil-square"></i>
                   </a>
-
-                  <button onclick="eliminarEstudiante('{{ e.id }}')"
-                          class="btn btn-sm shadow-sm"
-                          title="Eliminar Estudiante"
-                          style="background-color:#d90429; color:#fff; border-radius: 6px;">
+                  <button onclick="eliminarEstudiante('{{ e.id }}')" class="btn btn-sm shadow-sm" style="background-color:#d90429; color:#fff; border-radius: 6px;">
                     <i class="bi bi-trash3-fill"></i>
                   </button>
                 </div>
               </td>
             </tr>
-            {% empty %}
-            <tr>
-              <td colspan="7" class="text-center text-muted py-5">
-                <i class="bi bi-folder-x fs-1 d-block mb-2"></i>
-                No hay estudiantes registrados actualmente.
-              </td>
-            </tr>
             {% endfor %}
           </tbody>
-
         </table>
       </div>
     </div>
   </div>
-
 </div>
 
-<script>
-  function eliminarEstudiante(id) {
-    Swal.fire({
-      title: "¿Deseas eliminar este registro?",
-      text: "Esta acción borrará al estudiante permanentemente.",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#d90429",
-      cancelButtonColor: "#6c757d",
-      confirmButtonText: "Sí, eliminar",
-      cancelButtonText: "Cancelar",
-      reverseButtons: true,
-      borderRadius: '12px'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        window.location.href = "/estudiantes/eliminar/" + id + "/";
-      }
-    });
-  }
-</script>
-
 <style>
-  /* Personalización para que el buscador de DataTable luzca mejor */
-  .dataTables_wrapper .dataTables_filter input {
-    border-radius: 8px;
-    border: 1px solid #dee2e6;
-    padding: 5px 10px;
+  /* Estilos para los botones de exportación */
+  .dt-buttons {
     margin-bottom: 15px;
+    gap: 5px;
   }
-  .dataTables_wrapper .dataTables_length select {
-    border-radius: 8px;
-    padding: 4px;
+  
+  .dt-button {
+    border-radius: 6px !important;
+    font-size: 13px !important;
+    font-weight: bold !important;
+    padding: 6px 15px !important;
+    border: none !important;
+    color: white !important;
   }
+
+  button.buttons-excel { background-color: #198754 !important; } /* Verde Excel */
+  button.buttons-pdf { background-color: #dc3545 !important; }   /* Rojo PDF */
+  button.buttons-print { background-color: #6c757d !important; } /* Gris Print */
+
+  .dt-search input { border-radius: 8px !important; border: 1px solid #dee2e6 !important; }
+  .dt-paging .dt-paging-button.current { background: #194077 !important; color: white !important; border-radius: 8px !important; }
   .bg-info-subtle { background-color: #e0f2fe !important; }
   .text-info { color: #0369a1 !important; }
 </style>
@@ -141,13 +122,57 @@
 $(document).ready(function () {
   $('#tb_estudiantes').DataTable({
     language: {
-      url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json'
+      url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json'
     },
     pageLength: 10,
     responsive: true,
-    dom: '<"d-flex justify-content-between align-items-center mb-3"lf>rt<"d-flex justify-content-between align-items-center mt-3"ip>'
+    layout: {
+        topStart: {
+            buttons: [
+                {
+                    extend: 'excelHtml5',
+                    text: '<i class="bi bi-file-earmark-excel me-1"></i> Excel',
+                    title: 'Listado de Estudiantes',
+                    exportOptions: { columns: ':not(.no-export)' }
+                },
+                {
+                    extend: 'pdfHtml5',
+                    text: '<i class="bi bi-file-earmark-pdf me-1"></i> PDF',
+                    title: 'Listado de Estudiantes',
+                    exportOptions: { columns: ':not(.no-export)' }
+                },
+                {
+                    extend: 'print',
+                    text: '<i class="bi bi-printer me-1"></i> Imprimir',
+                    exportOptions: { columns: ':not(.no-export)' }
+                }
+            ]
+        },
+        topEnd: 'search',
+        bottomStart: 'info',
+        bottomEnd: 'paging'
+    },
+    columnDefs: [
+      { orderable: false, targets: 6 }
+    ]
   });
 });
-</script>
 
+function eliminarEstudiante(id) {
+  Swal.fire({
+    title: "¿Deseas eliminar este registro?",
+    text: "Esta acción borrará al estudiante permanentemente.",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#d90429",
+    cancelButtonColor: "#6c757d",
+    confirmButtonText: "Sí, eliminar",
+    cancelButtonText: "Cancelar"
+  }).then((result) => {
+    if (result.isConfirmed) {
+      window.location.href = "/estudiantes/eliminar/" + id + "/";
+    }
+  });
+}
+</script>
 {% endblock %}

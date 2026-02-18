@@ -10,6 +10,8 @@ urlpatterns = [
     path('estudiantes/actualizar/', views.procesar_edicion_estudiante, name='procesar_edicion_estudiante'),
     path('estudiantes/eliminar/<int:id>/', views.eliminar_estudiante, name='eliminar_estudiante'),
     path('estudiantes/remover_grupo/<int:id>/', views.remover_estudiante_grupo, name='remover_estudiante_grupo'),
+    path('validar-cedula-estudiante/', views.validar_cedula_estudiante_unica, name='validar_cedula_estudiante'),
+    path('validar-correo-estudiante/', views.validar_correo_estudiante_unico, name='validar_correo_estudiante'),
 
     # Grupos
     path('grupos/', views.lista_grupos, name='lista_grupos'),

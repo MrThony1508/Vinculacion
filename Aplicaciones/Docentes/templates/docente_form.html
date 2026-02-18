@@ -140,21 +140,74 @@
 
 <script>
 $(document).ready(function() {
+  
+  // 1. Definir el método personalizado para solo letras (incluye tildes, ñ y espacios)
+  $.validator.addMethod("soloLetras", function(value, element) {
+      return this.optional(element) || /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/i.test(value);
+  }, "Solo se permiten letras.");
+
+  // 2. Iniciar validación del formulario
   $("#frm_docente").validate({
     errorElement: "div",
     rules: {
-      nombre:{ required:true, minlength: 3 },
-      apellido:{ required:true, minlength: 3 },
-      cedula:{ required:true, digits: true, minlength: 10, maxlength: 10 },
-      correo:{ required:true, email:true },
-      carrera:{ required:true },
-      asignacion:{ required:true }
+      nombre: { 
+        required: true, 
+        minlength: 3,
+        soloLetras: true 
+      },
+      apellido: { 
+        required: true, 
+        minlength: 3,
+        soloLetras: true 
+      },
+      cedula: { 
+        required: true, 
+        digits: true, 
+        minlength: 10, 
+        maxlength: 10,
+        remote: {
+          url: "{% url 'validar_cedula_unica' %}",
+          type: "get",
+          data: {
+            cedula: function() { return $("input[name='cedula']").val(); }
+          }
+        }
+      },
+      correo: { 
+        required: true, 
+        email: true,
+        remote: {
+          url: "{% url 'validar_correo_unico' %}",
+          type: "get",
+          data: {
+            correo: function() { return $("input[name='correo']").val(); }
+          }
+        }
+      },
+      carrera: { required: true },
+      asignacion: { required: true }
     },
     messages: {
-      nombre: "Por favor, ingrese los nombres.",
-      apellido: "Por favor, ingrese los apellidos.",
-      cedula: "Ingrese una cédula válida de 10 dígitos.",
-      correo: "Ingrese un correo institucional válido.",
+      nombre: {
+        required: "Por favor, ingrese los nombres.",
+        soloLetras: "Los nombres solo deben contener letras."
+      },
+      apellido: {
+        required: "Por favor, ingrese los apellidos.",
+        soloLetras: "Los apellidos solo deben contener letras."
+      },
+      cedula: {
+        required: "Ingrese la cédula.",
+        digits: "Solo se permiten números.",
+        minlength: "Debe tener 10 dígitos.",
+        maxlength: "Debe tener 10 dígitos.",
+        remote: "Esta cédula ya se encuentra registrada en el sistema."
+      },
+      correo: {
+        required: "Ingrese el correo institucional.",
+        email: "Ingrese un correo válido.",
+        remote: "Este correo ya se encuentra registrado."
+      },
       carrera: "Debe seleccionar una carrera.",
       asignacion: "Seleccione el tipo de asignación."
     },

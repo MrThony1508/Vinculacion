@@ -80,13 +80,18 @@
                   </select>
                 </div>
               </div>
-
-              <div class="col-md-6">
-                <label class="form-label fw-semibold">Tipo de Práctica</label>
-                <div class="input-group">
-                  <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-briefcase"></i></span>
-                  <input type="text" name="tipo_practica" class="form-control border-start-0" placeholder="Ej: Pre-profesionales" required>
-                </div>
+              <div class="col-md-6 ">
+                  <label class="form-label small fw-semibold">Asignación de Prácticas</label>
+                  <div class="input-group">
+                      <span class="input-group-text bg-light border-end-0 text-muted">
+                          <i class="bi bi-briefcase"></i>
+                      </span>
+                      <select name="tipo_practica" class="form-select border-start-0 ps-0" required>
+                          <option value="" selected disabled>Seleccione una opción...</option>
+                          <option value="PPP">PPP - Prácticas Preprofesionales</option>
+                          <option value="Servicio Comunitario">Servicio Comunitario</option>
+                      </select>
+                  </div>
               </div>
 
               <div class="col-md-6">

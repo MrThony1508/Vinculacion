@@ -56,10 +56,7 @@ def guardar_docente(request):
             messages.error(request, 'Debe ingresar un correo')
             return redirect('nuevo_docente')
 
-        # Validar correo
-        if User.objects.filter(username=correo).exists():
-            messages.error(request, 'El correo ya está registrado')
-            return redirect('nuevo_docente')
+        
 
         # Validar cédula
         if Docente.objects.filter(cedula=cedula).exists():
@@ -163,3 +160,26 @@ def procesar_edicion_docente(request):
         return redirect('lista_docentes')
 
     return redirect('lista_docentes')
+from django.http import JsonResponse
+
+def validar_cedula_unica(request):
+    cedula = request.GET.get('cedula', None)
+    # Excluimos al docente actual si estamos editando (opcional)
+    docente_id = request.GET.get('docente_id', None)
+    
+    existe = Docente.objects.filter(cedula=cedula)
+    if docente_id:
+        existe = existe.exclude(id=docente_id)
+        
+    # Si existe, retornamos false (no es válido)
+    return JsonResponse(not existe.exists(), safe=False)
+from django.contrib.auth.models import User
+from django.http import JsonResponse
+
+def validar_correo_unico(request):
+    correo = request.GET.get('correo', None)
+    # Buscamos si ya existe un usuario con ese username/email
+    existe = User.objects.filter(username=correo).exists()
+    
+    # Retornamos True si el correo está libre, False si ya existe
+    return JsonResponse(not existe, safe=False)

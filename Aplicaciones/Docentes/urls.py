@@ -8,4 +8,6 @@ urlpatterns = [
     path('docentes/editar/<int:id>/', views.editar_docente, name='editar_docente'),
     path('docentes/actualizar/', views.procesar_edicion_docente, name='procesar_edicion_docente'),
     path('docentes/eliminar/<int:id>/', views.eliminar_docente, name='eliminar_docente'),
+    path('validar_cedula_unica/', views.validar_cedula_unica, name='validar_cedula_unica'),
+    path('validar_correo_unico/', views.validar_correo_unico, name='validar_correo_unico'),
 ]

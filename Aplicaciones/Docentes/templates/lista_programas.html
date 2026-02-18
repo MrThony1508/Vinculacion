@@ -1,0 +1,108 @@
+{% extends "admin.html" %}
+
+{% block contenido %}
+<link rel="stylesheet" href="https://cdn.datatables.net/2.3.1/css/dataTables.dataTables.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.2.0/css/buttons.dataTables.min.css">
+
+<script src="https://cdn.datatables.net/2.3.1/js/dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.2.0/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.2.0/js/buttons.html5.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+
+<div class="container-fluid animate-fade-in">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h4 class="fw-bold text-dark mb-1">Programas de Vinculación</h4>
+            <p class="text-muted small mb-0">Gestión de proyectos y periodos académicos.</p>
+        </div>
+        <a href="{% url 'nuevo_programa' %}" class="btn btn-dark shadow-sm d-flex align-items-center gap-2 px-4 py-2 rounded-3" style="background-color: #1e1e2d; border: none;">
+            <i class="bi bi-plus-circle-fill"></i>
+            <span>Nuevo Programa</span>
+        </a>
+    </div>
+
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+        <div class="card-body p-4">
+            <div class="table-responsive">
+                <table id="tb_programas" class="table table-hover align-middle mb-0">
+                    <thead class="bg-light">
+                        <tr>
+                            <th class="px-4 py-3 text-secondary small text-uppercase fw-bold">Proyecto / Programa</th>
+                            <th class="py-3 text-secondary small text-uppercase fw-bold">Coordinador</th>
+                            <th class="py-3 text-secondary small text-uppercase fw-bold">Periodo</th>
+                            <th class="py-3 text-secondary small text-uppercase fw-bold text-center">Estudiantes</th>
+                            <th class="py-3 text-secondary small text-uppercase fw-bold text-center no-export">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for p in programas %}
+                        <tr>
+                            <td class="px-4">
+                                <div class="fw-bold text-dark" style="font-size: 0.9rem;">{{ p.proyecto }}</div>
+                                <div class="text-muted" style="font-size: 0.75rem;">ID: #{{ p.id }}</div>
+                            </td>
+                            <td><span class="text-dark" style="font-size: 0.85rem;">{{ p.coordinador }}</span></td>
+                            <td><span class="badge bg-light text-dark border px-2 py-1">{{ p.periodo }}</span></td>
+                            <td class="text-center">
+                                <div class="fw-bold text-primary">{{ p.estudiantes }}</div>
+                            </td>
+                            <td class="text-center px-4">
+                                <div class="d-flex justify-content-center gap-2">
+                                    <a href="{% url 'editar_programa' p.id %}" class="btn btn-icon btn-light border btn-sm rounded-3 shadow-xs">
+                                        <i class="bi bi-pencil-square text-primary"></i>
+                                    </a>
+                                    <button onclick="eliminarPrograma('{{ p.id }}')" class="btn btn-icon btn-light border btn-sm rounded-3 shadow-xs">
+                                        <i class="bi bi-trash3-fill text-danger"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .dt-buttons { margin-bottom: 20px; display: flex; gap: 8px; }
+    button.buttons-excel { background-color: #107c41 !important; color: white !important; border-radius: 8px !important; }
+    button.buttons-pdf { background-color: #e11d48 !important; color: white !important; border-radius: 8px !important; }
+    .btn-icon { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+</style>
+
+<script>
+function eliminarPrograma(id){
+    Swal.fire({
+        title: "¿Eliminar programa?",
+        text: "Se borrarán los datos del proyecto seleccionado.",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#1e1e2d",
+        confirmButtonText: "Sí, eliminar",
+        cancelButtonText: "Cancelar"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href = "/programas/eliminar/" + id;
+        }
+    });
+}
+
+$(document).ready(function () {
+    $('#tb_programas').DataTable({
+        language: { url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json' },
+        layout: {
+            topStart: {
+                buttons: [
+                    { extend: 'excelHtml5', text: '<i class="bi bi-file-earmark-excel"></i> Excel', title: 'Reporte de Programas' },
+                    { extend: 'pdfHtml5', text: '<i class="bi bi-file-earmark-pdf"></i> PDF', title: 'Reporte de Programas' }
+                ]
+            }
+        }
+    });
+});
+</script>
+{% endblock %}

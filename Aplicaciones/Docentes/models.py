@@ -12,3 +12,14 @@ class Docente(models.Model):
 
     def __str__(self):
         return f"{self.nombre} {self.apellido}"
+
+class Programa(models.Model):
+    # Asegúrate de que se llamen así:
+    proyecto = models.CharField(max_length=255) 
+    coordinador = models.CharField(max_length=255)
+    periodo = models.CharField(max_length=100)
+    estudiantes = models.IntegerField(default=0)
+
+    def __str__(self):
+        return self.proyecto
+    

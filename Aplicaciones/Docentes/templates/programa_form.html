@@ -1,0 +1,102 @@
+{% extends "admin.html" %}
+
+{% block contenido %}
+<div class="container-fluid animate-fade-in">
+    <div class="mb-4 text-center">
+        <h4 class="fw-bold text-dark mb-1">Registro de Nuevo Programa</h4>
+        <p class="text-muted small">Ingrese los detalles del proyecto de vinculación y el personal a cargo.</p>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                <div style="height: 4px; background: linear-gradient(90deg, #22A6F2, #1e1e2d);"></div>
+                <div class="card-body p-4 p-md-5">
+                    <form action="{% url 'guardar_programa' %}" method="POST" id="frm_programa">
+                        {% csrf_token %}
+
+                        <div class="mb-4">
+                            <label class="form-label small fw-bold text-uppercase text-secondary">Datos del Proyecto</label>
+                            <hr class="mt-0 opacity-10">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Nombre del Proyecto / Programa</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light text-muted"><i class="bi bi-journal-text"></i></span>
+                                <input type="text" name="proyecto" class="form-control" placeholder="Ej: Fortalecimiento Digital GAD Pujilí">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <label class="form-label small fw-semibold">Coordinador Responsable</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light text-muted"><i class="bi bi-person-badge"></i></span>
+                                    <input type="text" name="coordinador" class="form-control" placeholder="Nombre completo del encargado">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label small fw-semibold">Periodo Académico</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light text-muted"><i class="bi bi-calendar3"></i></span>
+                                    <select name="periodo" class="form-select" required>
+                                        <option value="" selected disabled>Seleccione un periodo...</option>
+                                        <option value="ABRIL 2025 - AGOSTO 2025">ABRIL 2025 - AGOSTO 2025</option>
+                                        <option value="OCTUBRE 2025 - MARZO 2026">OCTUBRE 2025 - MARZO 2026</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-4">
+                                <label class="form-label small fw-semibold">Número de Estudiantes</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light text-muted"><i class="bi bi-people"></i></span>
+                                    <input type="number" name="estudiantes" class="form-control" placeholder="0" min="0">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-3 pt-3">
+                            <button type="submit" class="btn btn-dark w-100 py-2 rounded-3 shadow-sm d-flex align-items-center justify-content-center gap-2" style="background-color: #1e1e2d; border: none;">
+                                <i class="bi bi-check-circle-fill"></i>
+                                <span>Guardar Programa</span>
+                            </button>
+                            <a href="{% url 'lista_programas' %}" class="btn btn-light border w-50 py-2 rounded-3 text-secondary fw-medium">
+                                Cancelar
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .form-control { border-radius: 10px; padding: 0.6rem 0.8rem; border: 1px solid #e2e8f0; }
+    .error { color: #e63946; font-size: 0.75rem; font-weight: 500; margin-top: 4px; }
+    input.error { border-color: #fca5a5 !important; background-color: #fff1f2 !important; }
+</style>
+
+<script>
+$(document).ready(function() {
+    $("#frm_programa").validate({
+        rules: {
+            proyecto: { required: true, minlength: 5 },
+            coordinador: { required: true, minlength: 3 },
+            periodo: { required: true },
+            estudiantes: { required: true, digits: true }
+        },
+        messages: {
+            proyecto: "Ingrese el nombre del proyecto (min. 5 caracteres).",
+            coordinador: "Ingrese el nombre del coordinador.",
+            periodo: "Especifique el periodo académico.",
+            estudiantes: "Ingrese un número válido de estudiantes."
+        }
+    });
+});
+</script>
+{% endblock %}

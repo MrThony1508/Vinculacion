@@ -67,21 +67,6 @@
         justify-content: center;
     }
 
-    .stat-box:hover {
-        background: #e9ecef;
-    }
-
-    .stat-box img {
-        filter: grayscale(100%);
-        opacity: 0.7;
-        transition: 0.3s;
-    }
-
-    .stat-box:hover img {
-        filter: grayscale(0%);
-        opacity: 1;
-    }
-
     .stat-label {
         font-size: 0.75rem;
         text-transform: uppercase;
@@ -119,120 +104,92 @@
 <div class="container">
     <div class="search-container">
         <i class="bi bi-search search-icon"></i>
-        <input type="text" id="buscar" class="form-control search-input" placeholder="Buscar por nombre del proyecto o coordinador...">
+        <input type="text" id="buscar" class="form-control search-input" placeholder="Buscar proyecto, coordinador o periodo...">
     </div>
 
     <div id="programasContainer" class="row">
+        {% if programas %}
+            {% for programa in programas %}
+            <div class="col-12 programa-card-wrapper mb-4">
+                <div class="card shadow-sm p-4 programa-card animate__animated animate__fadeInUp" 
+                     style="border-left-color: {% cycle '#2ecc71' '#3498db' '#9b59b6' '#e67e22' %};">
+                    
+                    <div class="badge-category" style="background: rgba(0,0,0,0.05); color: #475569;">
+                        PROYECTO VIGENTE
+                    </div>
+                    
+                    <h3 class="fw-bold text-dark mb-3">{{ programa.proyecto }}</h3>
+                    
+                    <p class="text-muted mb-4">
+                        Iniciativa académica orientada al fortalecimiento institucional y vinculación con la sociedad de la Universidad Técnica de Cotopaxi.
+                    </p>
+                    
+                    <div class="row g-3">
+                        <div class="col-6 col-md-3">
+                            <div class="stat-box">
+                                <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" width="35" alt="Coordinador">
+                                <span class="stat-label">Coordinador</span>
+                                <span class="stat-value">{{ programa.coordinador }}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="col-6 col-md-3">
+                            <div class="stat-box">
+                                <img src="https://cdn-icons-png.flaticon.com/512/3135/3135810.png" width="35" alt="Estudiantes">
+                                <span class="stat-label">Estudiantes</span>
+                                <span class="stat-value">{{ programa.estudiantes }} asignados</span>
+                            </div>
+                        </div>
+                        
+                        <div class="col-6 col-md-3">
+                            <div class="stat-box">
+                                <img src="https://cdn-icons-png.flaticon.com/512/1827/1827951.png" width="35" alt="Calendario">
+                                <span class="stat-label">Periodo</span>
+                                <span class="stat-value">{{ programa.periodo }}</span>
+                            </div>
+                        </div>
 
-        <div class="col-12 programa-card-wrapper mb-4">
-            <div class="card shadow-sm p-4 programa-card animate__animated animate__fadeInUp">
-                <div class="badge-category">STEM & EDUCACIÓN</div>
-                <h3 class="fw-bold text-dark mb-3">Orientación Formativa Práctico-Colaborativa en Carreras STEM</h3>
-                <p class="text-muted mb-4" style="max-width: 800px;">
-                    Proyecto enfocado en la formación práctica y colaborativa de estudiantes STEM en la provincia de Cotopaxi, fortaleciendo el vínculo academia-sociedad.
-                </p>
-                
-                <div class="row g-3">
-                    <div class="col-6 col-md-3">
-                        <div class="stat-box">
-                            <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" width="35" alt="Icon">
-                            <span class="stat-label">Coordinador</span>
-                            <span class="stat-value">Ángel Hidalgo Oñate</span>
-                        </div>
-                    </div>
-                    <div class="col-6 col-md-3">
-                        <div class="stat-box">
-                            <img src="https://cdn-icons-png.flaticon.com/512/3209/3209265.png" width="35" alt="Icon">
-                            <span class="stat-label">Proyectos</span>
-                            <span class="stat-value text-muted italic">Por definir</span>
-                        </div>
-                    </div>
-                    <div class="col-6 col-md-3">
-                        <div class="stat-box">
-                            <img src="https://cdn-icons-png.flaticon.com/512/3135/3135810.png" width="35" alt="Icon">
-                            <span class="stat-label">Estudiantes</span>
-                            <span class="stat-value text-muted italic">Pendiente</span>
-                        </div>
-                    </div>
-                    <div class="col-6 col-md-3">
-                        <div class="stat-box">
-                            <img src="https://cdn-icons-png.flaticon.com/512/1827/1827951.png" width="35" alt="Icon">
-                            <span class="stat-label">Periodo</span>
-                            <span class="stat-value">Variable</span>
+                        <div class="col-6 col-md-3">
+                            <div class="stat-box">
+                                <img src="https://cdn-icons-png.flaticon.com/512/3209/3209265.png" width="35" alt="Estado">
+                                <span class="stat-label">Estado</span>
+                                <span class="stat-value text-success">En Ejecución</span>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-
-        <div class="col-12 programa-card-wrapper mb-4">
-            <div class="card shadow-sm p-4 programa-card animate__animated animate__fadeInUp" style="border-left-color: #3498db;">
-                <div class="badge-category" style="background: rgba(52, 152, 219, 0.1); color: #3498db;">DESARROLLO SOFTWARE</div>
-                <h3 class="fw-bold text-dark mb-3">Desarrollo de un Sistema Informático para Gestión de Vinculación</h3>
-                <p class="text-muted mb-4" style="max-width: 800px;">
-                    Automatización integral de procesos para la gestión de convenios y seguimiento de vinculación con entidades externas.
-                </p>
-                
-                <div class="row g-3">
-                    <div class="col-6 col-md-3">
-                        <div class="stat-box">
-                            <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" width="35" alt="Icon">
-                            <span class="stat-label">Coordinador</span>
-                            <span class="stat-value">K. Iza / B. Martínez</span>
-                        </div>
-                    </div>
-                    <div class="col-6 col-md-3">
-                        <div class="stat-box">
-                            <img src="https://cdn-icons-png.flaticon.com/512/3209/3209265.png" width="35" alt="Icon">
-                            <span class="stat-label">Total Proyectos</span>
-                            <span class="stat-value">1 Aplicado</span>
-                        </div>
-                    </div>
-                    <div class="col-6 col-md-3">
-                        <div class="stat-box">
-                            <img src="https://cdn-icons-png.flaticon.com/512/3135/3135810.png" width="35" alt="Icon">
-                            <span class="stat-label">Cupos Est.</span>
-                            <span class="stat-value">2 Estudiantes</span>
-                        </div>
-                    </div>
-                    <div class="col-6 col-md-3">
-                        <div class="stat-box">
-                            <img src="https://cdn-icons-png.flaticon.com/512/1827/1827951.png" width="35" alt="Icon">
-                            <span class="stat-label">Lanzamiento</span>
-                            <span class="stat-value">Marzo 2024</span>
-                        </div>
-                    </div>
-                </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-12 text-center py-5">
+                <i class="bi bi-folder-x text-muted" style="font-size: 4rem;"></i>
+                <h4 class="text-secondary mt-3">No hay proyectos registrados aún</h4>
             </div>
-        </div>
-
+        {% endif %}
     </div>
 
     <div id="noResults" class="text-center py-5 d-none">
         <i class="bi bi-search text-muted" style="font-size: 3rem;"></i>
-        <h4 class="mt-3 text-secondary">No se encontraron proyectos con ese nombre</h4>
+        <h4 class="mt-3 text-secondary">No se encontraron resultados</h4>
     </div>
 </div>
-
-
 
 <script>
 document.getElementById("buscar").addEventListener("input", function() {
     const texto = this.value.toLowerCase();
-    const programas = document.querySelectorAll(".programa-card-wrapper");
+    const tarjetas = document.querySelectorAll(".programa-card-wrapper");
     let encontrados = 0;
 
-    programas.forEach(p => {
-        const contenido = p.innerText.toLowerCase();
+    tarjetas.forEach(t => {
+        const contenido = t.innerText.toLowerCase();
         if (contenido.includes(texto)) {
-            p.classList.remove("d-none");
+            t.classList.remove("d-none");
             encontrados++;
         } else {
-            p.classList.add("d-none");
+            t.classList.add("d-none");
         }
     });
 
-    // Manejo de mensaje sin resultados
     const noResults = document.getElementById("noResults");
     if (encontrados === 0) {
         noResults.classList.remove("d-none");

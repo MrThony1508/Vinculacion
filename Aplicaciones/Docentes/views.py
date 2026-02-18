@@ -183,3 +183,84 @@ def validar_correo_unico(request):
     
     # Retornamos True si el correo está libre, False si ya existe
     return JsonResponse(not existe, safe=False)
+
+from .models import Programa
+# ============================
+# LISTAR PROGRAMAS
+# ============================
+@login_required
+def lista_programas(request):
+    programas = Programa.objects.all()
+    return render(request, 'lista_programas.html', {
+        'programas': programas
+    })
+
+# ============================
+# NUEVO PROGRAMA (FORMULARIO)
+# ============================
+@login_required
+def nuevo_programa(request):
+    return render(request, 'programa_form.html')
+
+# ============================
+# GUARDAR PROGRAMA
+# ============================
+@login_required
+def guardar_programa(request):
+    if request.method == 'POST':
+        proyecto = request.POST.get('proyecto')
+        coordinador = request.POST.get('coordinador')
+        periodo = request.POST.get('periodo')
+        estudiantes = request.POST.get('estudiantes')
+
+        Programa.objects.create(
+            proyecto=proyecto,
+            coordinador=coordinador,
+            periodo=periodo,
+            estudiantes=estudiantes
+        )
+
+        messages.success(request, 'Programa registrado correctamente')
+        return redirect('lista_programas')
+
+    return redirect('nuevo_programa')
+
+# ============================
+# EDITAR PROGRAMA (FORMULARIO)
+# ============================
+@login_required
+def editar_programa(request, id):
+    programa = Programa.objects.get(id=id)
+    return render(request, 'programa_editar.html', {
+        'programa': programa
+    })
+
+# ============================
+# PROCESAR EDICIÓN
+# ============================
+@login_required
+def procesar_edicion_programa(request):
+    if request.method == 'POST':
+        id = request.POST.get('id')
+        programa = Programa.objects.get(id=id)
+
+        programa.proyecto = request.POST.get('proyecto')
+        programa.coordinador = request.POST.get('coordinador')
+        programa.periodo = request.POST.get('periodo')
+        programa.estudiantes = request.POST.get('estudiantes')
+
+        programa.save()
+        messages.success(request, 'Programa actualizado correctamente')
+        return redirect('lista_programas')
+
+    return redirect('lista_programas')
+
+# ============================
+# ELIMINAR PROGRAMA
+# ============================
+@login_required
+def eliminar_programa(request, id):
+    programa = Programa.objects.get(id=id)
+    programa.delete()
+    messages.success(request, 'Programa eliminado correctamente')
+    return redirect('lista_programas')

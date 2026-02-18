@@ -167,40 +167,61 @@
 <div class="d-flex">
   <aside class="sidebar">
     <div class="sidebar-header">
-      <h5 class="mb-0"><i class="bi bi-grid-fill text-secondary me-2"></i> UTC PANEL</h5>
-      <small class="text-uppercase" style="color: #64748b; font-size: 0.7rem; font-weight: 700;">Gestión Administrativa</small>
+        <h5 class="mb-0"><i class="bi bi-grid-fill text-secondary me-2"></i> UTC PANEL</h5>
+        <small class="text-uppercase" style="color: #64748b; font-size: 0.7rem; font-weight: 700;">Gestión Administrativa</small>
     </div>
 
     <div class="sidebar-divider"></div>
 
     <ul class="nav flex-column">
-      <li class="nav-item">
-        <a class="nav-link active" href="{% url 'dashboard' %}">
-          <i class="bi bi-house-door"></i> Inicio
-        </a>
-      </li>
+        <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}" href="{% url 'dashboard' %}">
+                <i class="bi bi-house-door"></i> Inicio
+            </a>
+        </li>
 
-      <li class="nav-item">
-        <a class="nav-link" href="{% url 'lista_docentes' %}">
-          <i class="bi bi-person-badge"></i> Lista de Docentes
-        </a>
-      </li>
+        <div class="px-4 mt-3 mb-2">
+            <small class="text-uppercase fw-bold" style="color: #475569; font-size: 0.65rem; letter-spacing: 1px;">Docencia</small>
+        </div>
 
-      <li class="nav-item">
-        <a class="nav-link" href="{% url 'nuevo_docente' %}">
-          <i class="bi bi-plus-circle"></i> Registrar Nuevo
-        </a>
-      </li>
+        <li class="nav-item">
+            <a class="nav-link {% if 'docentes' in request.path and 'nuevo' not in request.path %}active{% endif %}" href="{% url 'lista_docentes' %}">
+                <i class="bi bi-person-badge"></i> Lista de Docentes
+            </a>
+        </li>
 
-      <div class="sidebar-divider"></div>
+        <li class="nav-item">
+            <a class="nav-link {% if 'docentes/nuevo' in request.path %}active{% endif %}" href="{% url 'nuevo_docente' %}">
+                <i class="bi bi-person-plus"></i> Registrar Docente
+            </a>
+        </li>
 
-      <li class="nav-item mt-auto">
-        <a class="nav-link text-warning" href="javascript:void(0);" onclick="confirmarCerrarSesion()" style="background: rgba(255, 193, 7, 0.05);">
-          <i class="bi bi-box-arrow-left"></i> Cerrar Sesión
-        </a>
-      </li>
+        <div class="sidebar-divider"></div>
+        <div class="px-4 mb-2">
+            <small class="text-uppercase fw-bold" style="color: #475569; font-size: 0.65rem; letter-spacing: 1px;">Vinculación</small>
+        </div>
+
+        <li class="nav-item">
+            <a class="nav-link {% if 'programas' in request.path and 'nuevo' not in request.path %}active{% endif %}" href="{% url 'lista_programas' %}">
+                <i class="bi bi-journal-text"></i> Lista de Programas
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link {% if 'programas/nuevo' in request.path %}active{% endif %}" href="{% url 'nuevo_programa' %}">
+                <i class="bi bi-file-earmark-plus"></i> Nuevo Programa
+            </a>
+        </li>
+
+        <div class="sidebar-divider"></div>
+
+        <li class="nav-item mt-auto">
+            <a class="nav-link text-warning" href="javascript:void(0);" onclick="confirmarCerrarSesion()" style="background: rgba(255, 193, 7, 0.05);">
+                <i class="bi bi-box-arrow-left"></i> Cerrar Sesión
+            </a>
+        </li>
     </ul>
-  </aside>
+</aside>
 
   <div class="main-wrapper">
     

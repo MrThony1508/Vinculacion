@@ -34,7 +34,7 @@
 
     <div class="filter-card mb-4 bg-white p-3 rounded shadow-sm border">
         <div class="row g-3">
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <label class="form-label small fw-bold">CARRERA</label>
                 <select id="carreraSelect" class="form-select bg-light border-0">
                     <option value="todas">Todas las carreras</option>
@@ -46,7 +46,7 @@
                     <option value="Hidráulica">Hidráulica</option>
                 </select>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <label class="form-label small fw-bold">TIPO DE PRÁCTICA</label>
                 <select id="practicaSelect" class="form-select bg-light border-0">
                     <option value="todas">Todos los tipos</option>
@@ -54,7 +54,19 @@
                     <option value="Servicio Comunitario">Servicio Comunitario</option>
                 </select>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
+                <label class="form-label small fw-bold">PERÍODO ACADÉMICO</label>
+                <select id="periodoSelect" class="form-select bg-light border-0">
+                    <option value="todas">Todos los periodos</option>
+                    
+                    <option value="OCTUBRE 2025 - MARZO 2026">OCTUBRE 2025 - MARZO 2026</option>
+
+                    {% for p in periodos %}
+                        <option value="{{ p }}">{{ p }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3">
                 <label class="form-label small fw-bold">BUSCAR ESTUDIANTE</label>
                 <input type="text" id="buscadorNombre" class="form-control bg-light border-0" placeholder="Nombre...">
             </div>
@@ -78,41 +90,37 @@ function initMap() {
     if (!dataElement) return;
 
     const listaEstudiantes = JSON.parse(dataElement.textContent);
-    
-    // Coordenadas iniciales (Latacunga)
     const centro = { lat: -0.9333, lng: -78.6167 };
 
     map = new google.maps.Map(document.getElementById("map"), {
         zoom: 13,
-        center: centro,mapTypeControl: false,
+        center: centro,
+        mapTypeControl: false,
         streetViewControl: false,
-        styles: [
-            { "featureType": "poi", "stylers": [{ "visibility": "off" }] }
-        ]
+        styles: [{ "featureType": "poi", "stylers": [{ "visibility": "off" }] }]
     });
 
     function agregarMarcadores() {
-        // Limpiar infoWindow abierto
         if (activeInfoWindow) activeInfoWindow.close();
-        
-        // Limpiar marcadores previos
         markers.forEach(m => m.setMap(null));
         markers = [];
 
         const fCarrera = document.getElementById('carreraSelect').value;
         const fPractica = document.getElementById('practicaSelect').value;
+        const fPeriodo = document.getElementById('periodoSelect').value;
         const fNombre = document.getElementById('buscadorNombre').value.toLowerCase();
 
         const grupos = {};
 
         listaEstudiantes.forEach(est => {
-            // Validaciones de filtros
+            // Filtros combinados
             if (fCarrera !== 'todas' && est.carrera !== fCarrera) return;
             if (fPractica !== 'todas' && est.tipo_practica !== fPractica) return;
+            if (fPeriodo !== 'todas' && est.periodo !== fPeriodo) return;
+            
             const nombreCompleto = `${est.nombre} ${est.apellido}`.toLowerCase();
             if (fNombre && !nombreCompleto.includes(fNombre)) return;
 
-            // Agrupar por coordenadas exactas
             const key = `${est.lat}_${est.lng}`;
             if (!grupos[key]) {
                 grupos[key] = {
@@ -130,20 +138,16 @@ function initMap() {
             grupos[key].integrantes.push(`${est.nombre} ${est.apellido}`);
         });
 
-        // Dibujar un marcador por cada ubicación única
         Object.values(grupos).forEach(g => {
-            // Definir colores por carrera
             const colores = {
-                'Sistemas de información': '#1e40af', // Azul oscuro
-                'Software': '#3b82f6',              // Azul claro
-                'Electromecánica': '#dc2626',       // Rojo
-                'Industrial': '#059669',            // Verde
-                'Electricidad': '#d97706',          // Naranja
-                'Hidráulica': '#0891b2'             // Cian
+                'Sistemas de información': '#1e40af',
+                'Software': '#3b82f6',
+                'Electromecánica': '#dc2626',
+                'Industrial': '#059669',
+                'Electricidad': '#d97706',
+                'Hidráulica': '#0891b2'
             };
 
-            // Si la carrera del grupo existe en nuestro diccionario, usamos ese color, 
-            // de lo contrario usamos el azul de la UTC por defecto.
             const colorFinal = colores[g.carrera] || '#173D62';
 
             const marker = new google.maps.Marker({
@@ -153,18 +157,15 @@ function initMap() {
                 animation: google.maps.Animation.DROP,
                 icon: {
                     path: google.maps.SymbolPath.BACKWARD_CLOSED_ARROW,
-                    fillColor: colorFinal, // <--- Aplicamos el color dinámico aquí
+                    fillColor: colorFinal,
                     fillOpacity: 0.9,
                     strokeWeight: 1,
                     strokeColor: "#ffffff",
                     scale: 7
                 }
             });
-    
-    // ... resto del código (InfoWindow, etc)
 
             const integrantesHtml = g.integrantes.map(i => `<li>${i}</li>`).join('');
-
             const contentString = `
                 <div class="custom-infowindow">
                     <h6>${g.grupo_nombre}</h6>
@@ -200,12 +201,12 @@ function initMap() {
         });
     }
 
-    // Listeners
+    // Listeners para todos los filtros
     document.getElementById('carreraSelect').addEventListener('change', agregarMarcadores);
     document.getElementById('practicaSelect').addEventListener('change', agregarMarcadores);
+    document.getElementById('periodoSelect').addEventListener('change', agregarMarcadores);
     document.getElementById('buscadorNombre').addEventListener('input', agregarMarcadores);
 
-    // Carga inicial
     agregarMarcadores();
 }
 </script>

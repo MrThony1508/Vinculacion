@@ -42,6 +42,23 @@
                             rows="6" placeholder="Describa las tareas o hitos del grupo..." 
                             style="border-radius: 10px;" required></textarea>
                 </div>
+
+                <div class="bg-light p-3 rounded-3 border">
+                  <h6 class="small fw-bold text-uppercase text-muted mb-3">Ingreso Manual de Coordenadas</h6>
+                  <div class="row g-2">
+                    <div class="col-6">
+                      <label class="x-small fw-bold">LATITUD</label>
+                      <input type="number" step="any" id="input-lat" name="latitud" class="form-control form-control-sm" placeholder="Ej: -0.9333" required>
+                    </div>
+                    <div class="col-6">
+                      <label class="x-small fw-bold">LONGITUD</label>
+                      <input type="number" step="any" id="input-lng" name="longitud" class="form-control form-control-sm" placeholder="Ej: -78.6167" required>
+                    </div>
+                  </div>
+                  <button type="button" onclick="actualizarMapaDesdeInputs()" class="btn btn-dark btn-sm w-100 mt-2 py-1">
+                    <i class="bi bi-geo-fill me-1"></i> Ubicar en Mapa
+                  </button>
+                </div>
               </div>
 
               <div class="col-md-7">
@@ -50,18 +67,15 @@
                 <div class="position-relative">
                   <div class="input-group mb-2 shadow-sm" style="position: absolute; top: 10px; left: 10px; z-index: 5; width: calc(100% - 20px);">
                     <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-primary"></i></span>
-                    <input id="pac-input" class="form-control border-start-0 ps-0" type="text" placeholder="Buscar dirección o lugar en Latacunga...">
+                    <input id="pac-input" class="form-control border-start-0 ps-0" type="text" placeholder="Buscar dirección o lugar...">
                   </div>
 
-                  <div id="map" class="border" style="height:380px; width:100%; border-radius: 12px; box-shadow: inset 0 0 10px rgba(0,0,0,0.05);"></div>
+                  <div id="map" class="border" style="height:420px; width:100%; border-radius: 12px; box-shadow: inset 0 0 10px rgba(0,0,0,0.05);"></div>
                 </div>
 
                 <div class="d-flex gap-3 mt-2">
-                   <div class="small text-muted"><i class="bi bi-geo-alt-fill me-1"></i> Arrastre el marcador para precisar la ubicación.</div>
+                   <div class="small text-muted"><i class="bi bi-info-circle-fill me-1"></i> Busque un lugar, ingrese coordenadas o arrastre el marcador.</div>
                 </div>
-
-                <input type="hidden" name="latitud" id="latitud">
-                <input type="hidden" name="longitud" id="longitud">
               </div>
             </div>
 
@@ -87,6 +101,7 @@
 <style>
   #pac-input:focus { border-color: #dee2e6; box-shadow: none; }
   .form-control:focus { border-color: #194077; box-shadow: 0 0 0 0.25rem rgba(25, 64, 119, 0.1); }
+  .x-small { font-size: 0.65rem; }
 </style>
 
 <script>
@@ -99,7 +114,8 @@
     map = new google.maps.Map(document.getElementById("map"), {
       center: defaultLocation,
       zoom: 14,
-      styles: [ /* Estilo de mapa opcional más limpio */
+      mapTypeControl: false,
+      styles: [
         { featureType: "poi", elementType: "labels", stylers: [{ visibility: "off" }] }
       ]
     });
@@ -111,34 +127,57 @@
       animation: google.maps.Animation.DROP,
     });
 
-    // Actualizar campos ocultos
-    document.getElementById("latitud").value = defaultLocation.lat;
-    document.getElementById("longitud").value = defaultLocation.lng;
+    // Inicializar inputs
+    document.getElementById("input-lat").value = defaultLocation.lat;
+    document.getElementById("input-lng").value = defaultLocation.lng;
 
+    // Al arrastrar el marcador
     marker.addListener("dragend", function () {
       const pos = marker.getPosition();
-      document.getElementById("latitud").value = pos.lat();
-      document.getElementById("longitud").value = pos.lng();
+      actualizarInputs(pos.lat(), pos.lng());
     });
 
+    // Buscador
     const input = document.getElementById("pac-input");
     const searchBox = new google.maps.places.SearchBox(input);
 
     searchBox.addListener("places_changed", function () {
       const places = searchBox.getPlaces();
       if (places.length === 0) return;
-
       const place = places[0];
       if (!place.geometry) return;
 
-      map.panTo(place.geometry.location);
-      map.setZoom(17);
-      marker.setPosition(place.geometry.location);
-
-      document.getElementById("latitud").value = place.geometry.location.lat();
-      document.getElementById("longitud").value = place.geometry.location.lng();
+      moverMarcador(place.geometry.location.lat(), place.geometry.location.lng(), 17);
     });
   }
+
+  function actualizarInputs(lat, lng) {
+    document.getElementById("input-lat").value = lat.toFixed(6);
+    document.getElementById("input-lng").value = lng.toFixed(6);
+  }
+
+  function moverMarcador(lat, lng, zoom = null) {
+    const newPos = { lat: parseFloat(lat), lng: parseFloat(lng) };
+    map.panTo(newPos);
+    if (zoom) map.setZoom(zoom);
+    marker.setPosition(newPos);
+    actualizarInputs(lat, lng);
+  }
+
+  function actualizarMapaDesdeInputs() {
+    const lat = document.getElementById("input-lat").value;
+    const lng = document.getElementById("input-lng").value;
+    if (lat && lng) {
+      moverMarcador(lat, lng, 16);
+    } else {
+      Swal.fire("Error", "Por favor ingrese latitud y longitud válidas", "error");
+    }
+  }
+
+  // Permitir que al presionar Enter en los inputs de coordenadas también se ubique
+  document.getElementById("input-lat").addEventListener("keypress", function(e) { if(e.key === 'Enter') { e.preventDefault(); actualizarMapaDesdeInputs(); } });
+  document.getElementById("input-lng").addEventListener("keypress", function(e) { if(e.key === 'Enter') { e.preventDefault(); actualizarMapaDesdeInputs(); } });
+
 </script>
 
 <script
@@ -150,13 +189,17 @@
   $("#frm_grupo").validate({
     errorClass: "text-danger small mt-1",
     rules: {
-      actividades_realizadas: { required: true, minlength: 10 }
+      actividades_realizadas: { required: true, minlength: 10 },
+      latitud: { required: true },
+      longitud: { required: true }
     },
     messages: {
       actividades_realizadas: {
         required: "Este campo es obligatorio",
-        minlength: "Por favor, describa las actividades con más detalle."
-      }
+        minlength: "Describa las actividades con más detalle."
+      },
+      latitud: "Requerido",
+      longitud: "Requerido"
     }
   });
 </script>

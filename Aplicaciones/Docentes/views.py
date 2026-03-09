@@ -12,6 +12,7 @@ from smtplib import SMTPException
 from .models import Docente
 
 
+
 # ============================
 # GENERAR CONTRASEÑA
 # ============================
@@ -185,16 +186,29 @@ def validar_correo_unico(request):
     return JsonResponse(not existe, safe=False)
 
 from .models import Programa
-# ============================
-# LISTAR PROGRAMAS
-# ============================
+from django.db.models import Count, OuterRef, Subquery, IntegerField
+from django.db.models.functions import Coalesce
+from Aplicaciones.Estudiantes.models import Estudiante
+
+# Asegúrate de importar tu modelo Estudiante al inicio del archivo
+# from .models import Estudiante, Programa 
+
 @login_required
 def lista_programas(request):
-    programas = Programa.objects.all()
+    # Definimos una subconsulta para contar estudiantes que coincidan con el nombre del proyecto
+    # Usamos Coalesce para que si no hay estudiantes, devuelva 0 en lugar de None
+    conteo_estudiantes = Estudiante.objects.filter(
+        proyecto=OuterRef('proyecto')
+    ).values('proyecto').annotate(total=Count('id')).values('total')
+
+    # Anotamos el conteo real al queryset de programas
+    programas = Programa.objects.annotate(
+        conteo_real=Coalesce(Subquery(conteo_estudiantes), 0, output_field=IntegerField())
+    ).order_by('proyecto')
+
     return render(request, 'lista_programas.html', {
         'programas': programas
     })
-
 # ============================
 # NUEVO PROGRAMA (FORMULARIO)
 # ============================
@@ -211,13 +225,13 @@ def guardar_programa(request):
         proyecto = request.POST.get('proyecto')
         coordinador = request.POST.get('coordinador')
         periodo = request.POST.get('periodo')
-        estudiantes = request.POST.get('estudiantes')
+       
 
         Programa.objects.create(
             proyecto=proyecto,
             coordinador=coordinador,
             periodo=periodo,
-            estudiantes=estudiantes
+            
         )
 
         messages.success(request, 'Programa registrado correctamente')
@@ -247,7 +261,7 @@ def procesar_edicion_programa(request):
         programa.proyecto = request.POST.get('proyecto')
         programa.coordinador = request.POST.get('coordinador')
         programa.periodo = request.POST.get('periodo')
-        programa.estudiantes = request.POST.get('estudiantes')
+        
 
         programa.save()
         messages.success(request, 'Programa actualizado correctamente')

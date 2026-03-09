@@ -32,7 +32,7 @@
                             <th class="px-4 py-3 text-secondary small text-uppercase fw-bold">Proyecto / Programa</th>
                             <th class="py-3 text-secondary small text-uppercase fw-bold">Coordinador</th>
                             <th class="py-3 text-secondary small text-uppercase fw-bold">Periodo</th>
-                            <th class="py-3 text-secondary small text-uppercase fw-bold text-center">Estudiantes</th>
+                            <th class="py-3 text-secondary small text-uppercase fw-bold text-center">N° Estudiantes</th>
                             <th class="py-3 text-secondary small text-uppercase fw-bold text-center no-export">Acciones</th>
                         </tr>
                     </thead>
@@ -46,17 +46,25 @@
                             <td><span class="text-dark" style="font-size: 0.85rem;">{{ p.coordinador }}</span></td>
                             <td><span class="badge bg-light text-dark border px-2 py-1">{{ p.periodo }}</span></td>
                             <td class="text-center">
-                                <div class="fw-bold text-primary">{{ p.estudiantes }}</div>
+                                <span class="badge rounded-pill {% if p.conteo_real > 0 %}bg-primary{% else %}bg-secondary{% endif %} px-3" style="font-size: 0.9rem;">
+                                    {{ p.conteo_real|default:0 }}
+                                </span>
                             </td>
                             <td class="text-center px-4">
                                 <div class="d-flex justify-content-center gap-2">
-                                    <a href="{% url 'editar_programa' p.id %}" class="btn btn-icon btn-light border btn-sm rounded-3 shadow-xs">
+                                    <a href="{% url 'editar_programa' p.id %}" class="btn btn-icon btn-light border btn-sm rounded-3 shadow-xs" title="Editar Programa">
                                         <i class="bi bi-pencil-square text-primary"></i>
                                     </a>
-                                    <button onclick="eliminarPrograma('{{ p.id }}')" class="btn btn-icon btn-light border btn-sm rounded-3 shadow-xs">
+                                    <button onclick="eliminarPrograma('{{ p.id }}')" class="btn btn-icon btn-light border btn-sm rounded-3 shadow-xs" title="Eliminar Programa">
                                         <i class="bi bi-trash3-fill text-danger"></i>
                                     </button>
                                 </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center py-5 text-muted small">
+                                No hay programas registrados actualmente.
                             </td>
                         </tr>
                         {% endfor %}
@@ -69,19 +77,22 @@
 
 <style>
     .dt-buttons { margin-bottom: 20px; display: flex; gap: 8px; }
-    button.buttons-excel { background-color: #107c41 !important; color: white !important; border-radius: 8px !important; }
-    button.buttons-pdf { background-color: #e11d48 !important; color: white !important; border-radius: 8px !important; }
-    .btn-icon { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+    button.buttons-excel { background-color: #107c41 !important; color: white !important; border: none !important; border-radius: 8px !important; padding: 6px 15px !important; }
+    button.buttons-pdf { background-color: #e11d48 !important; color: white !important; border: none !important; border-radius: 8px !important; padding: 6px 15px !important; }
+    .btn-icon { width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; background: white; }
+    .btn-icon:hover { transform: translateY(-2px); box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+    #tb_programas thead th { border-bottom: 1px solid #edf2f7; }
 </style>
 
 <script>
 function eliminarPrograma(id){
     Swal.fire({
         title: "¿Eliminar programa?",
-        text: "Se borrarán los datos del proyecto seleccionado.",
+        text: "Se borrarán los datos del proyecto seleccionado. Esta acción no se puede deshacer.",
         icon: "warning",
         showCancelButton: true,
         confirmButtonColor: "#1e1e2d",
+        cancelButtonColor: "#d33",
         confirmButtonText: "Sí, eliminar",
         cancelButtonText: "Cancelar"
     }).then((result) => {
@@ -94,11 +105,27 @@ function eliminarPrograma(id){
 $(document).ready(function () {
     $('#tb_programas').DataTable({
         language: { url: 'https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json' },
+        pageLength: 10,
+        order: [[0, 'asc']], // Ordenar por nombre de proyecto
         layout: {
             topStart: {
                 buttons: [
-                    { extend: 'excelHtml5', text: '<i class="bi bi-file-earmark-excel"></i> Excel', title: 'Reporte de Programas' },
-                    { extend: 'pdfHtml5', text: '<i class="bi bi-file-earmark-pdf"></i> PDF', title: 'Reporte de Programas' }
+                    { 
+                        extend: 'excelHtml5', 
+                        text: '<i class="bi bi-file-earmark-excel me-1"></i> Excel', 
+                        title: 'Reporte de Programas de Vinculación',
+                        exportOptions: { columns: ':not(.no-export)' }
+                    },
+                    { 
+                        extend: 'pdfHtml5', 
+                        text: '<i class="bi bi-file-earmark-pdf me-1"></i> PDF', 
+                        title: 'Reporte de Programas de Vinculación',
+                        exportOptions: { columns: ':not(.no-export)' },
+                        customize: function(doc) {
+                            doc.styles.tableHeader.fillColor = '#1e1e2d';
+                            doc.content[1].table.widths = ['40%', '25%', '25%', '10%'];
+                        }
+                    }
                 ]
             }
         }

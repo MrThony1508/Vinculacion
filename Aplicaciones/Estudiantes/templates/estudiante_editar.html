@@ -27,11 +27,24 @@
                 <hr class="mt-0 mb-4 opacity-10">
               </div>
 
+              <div class="col-md-12">
+                <label class="form-label fw-semibold">Cédula</label>
+                <div class="input-group">
+                  <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-card-heading"></i></span>
+                  <input type="text" id="cedulaInput" name="cedula" class="form-control border-start-0" 
+                         value="{{ estudiante.cedula }}" maxlength="10" required>
+                  <span class="input-group-text bg-white border-start-0 d-none" id="loaderCedula">
+                    <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+                  </span>
+                </div>
+                <div id="api-error" class="text-danger small mt-1" style="display:none;"></div>
+              </div>
+
               <div class="col-md-6">
                 <label class="form-label fw-semibold">Nombre</label>
                 <div class="input-group">
                   <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-person"></i></span>
-                  <input type="text" name="nombre" class="form-control border-start-0" 
+                  <input type="text" id="nombreInput" name="nombre" class="form-control border-start-0" 
                          value="{{ estudiante.nombre }}" required>
                 </div>
               </div>
@@ -40,21 +53,12 @@
                 <label class="form-label fw-semibold">Apellido</label>
                 <div class="input-group">
                   <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-person"></i></span>
-                  <input type="text" name="apellido" class="form-control border-start-0" 
+                  <input type="text" id="apellidoInput" name="apellido" class="form-control border-start-0" 
                          value="{{ estudiante.apellido }}" required>
                 </div>
               </div>
 
-              <div class="col-md-6">
-                <label class="form-label fw-semibold">Cédula</label>
-                <div class="input-group">
-                  <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-card-heading"></i></span>
-                  <input type="text" name="cedula" class="form-control border-start-0" 
-                         value="{{ estudiante.cedula }}" required>
-                </div>
-              </div>
-
-              <div class="col-md-6">
+              <div class="col-md-12">
                 <label class="form-label fw-semibold">Correo Institucional</label>
                 <div class="input-group">
                   <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-envelope"></i></span>
@@ -101,8 +105,15 @@
                 <label class="form-label fw-semibold">Periodo Académico</label>
                 <div class="input-group">
                   <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-calendar-event"></i></span>
-                  <input type="text" name="periodo_academico" class="form-control border-start-0" 
-                         value="{{ estudiante.periodo_academico }}" required>
+                  <select name="periodo_academico" class="form-select border-start-0 ps-0" required>
+                    <option value="" disabled>Seleccione un periodo...</option>
+                    <option value="ABRIL 2025 - AGOSTO 2025" {% if estudiante.periodo_academico == "ABRIL 2025 - AGOSTO 2025" %}selected{% endif %}>
+                        ABRIL 2025 - AGOSTO 2025
+                    </option>
+                    <option value="OCTUBRE 2025 - MARZO 2026" {% if estudiante.periodo_academico == "OCTUBRE 2025 - MARZO 2026" %}selected{% endif %}>
+                        OCTUBRE 2025 - MARZO 2026
+                    </option>
+                  </select>
                 </div>
               </div>
             </div>
@@ -125,9 +136,71 @@
 </div>
 
 <style>
-  .form-control:focus {
+  .form-control:focus, .form-select:focus {
     border-color: #194077;
     box-shadow: 0 0 0 0.25rem rgba(25, 64, 119, 0.1);
   }
+  .input-group-text { border-color: #dee2e6; }
 </style>
+
+<script>
+$(document).ready(function() {
+
+  async function consultarCedula(cedula) {
+      const proxyUrl = 'https://infoplacas.herokuapp.com/';
+      const targetUrl = 'https://si.secap.gob.ec/sisecap/logeo_web/json/busca_persona_registro_civil.php';
+      const $loader = $('#loaderCedula');
+      const $errorDiv = $('#api-error');
+
+      $loader.removeClass('d-none');
+      $errorDiv.hide();
+
+      try {
+          const response = await fetch(proxyUrl + targetUrl, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+              body: new URLSearchParams({ documento: cedula, tipo: '1' })
+          });
+
+          const data = await response.json();
+
+          if (data && data.nombres && data.apellidos) {
+              $('#nombreInput').val(data.nombres);
+              $('#apellidoInput').val(data.apellidos);
+              $("#nombreInput").valid();
+              $("#apellidoInput").valid();
+          } else {
+              $errorDiv.text("No se encontraron datos para esta cédula.").show();
+          }
+      } catch (error) {
+          $errorDiv.text("Error al consultar el Registro Civil.").show();
+      } finally {
+          $loader.addClass('d-none');
+      }
+  }
+
+  $('#cedulaInput').on('blur', function() {
+      const cedula = $(this).val().trim();
+      if (cedula.length === 10 && !isNaN(cedula)) {
+          consultarCedula(cedula);
+      }
+  });
+
+  $("#frm_editar_estudiante").validate({
+      errorClass: "text-danger small mt-1",
+      rules: {
+          cedula: { required: true, digits: true, minlength: 10, maxlength: 10 },
+          nombre: { required: true },
+          apellido: { required: true },
+          correo_institucional: { required: true, email: true },
+          periodo_academico: { required: true }
+      },
+      messages: {
+          cedula: "Ingrese una cédula válida de 10 dígitos.",
+          correo_institucional: "Ingrese un correo institucional válido.",
+          periodo_academico: "Seleccione un periodo académico."
+      }
+  });
+});
+</script>
 {% endblock %}

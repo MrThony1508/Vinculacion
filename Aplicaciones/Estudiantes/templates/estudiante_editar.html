@@ -17,7 +17,7 @@
           
           <form action="{% url 'procesar_edicion_estudiante' %}" method="POST" id="frm_editar_estudiante">
             {% csrf_token %}
-            <input type="hidden" name="id" value="{{ estudiante.id }}">
+            <input type="hidden" name="id" id="estudiante_id" value="{{ estudiante.id }}">
 
             <div class="row g-4">
               <div class="col-12">
@@ -62,8 +62,26 @@
                 <label class="form-label fw-semibold">Correo Institucional</label>
                 <div class="input-group">
                   <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-envelope"></i></span>
-                  <input type="email" name="correo_institucional" class="form-control border-start-0" 
+                  <input type="email" id="correo_institucional" name="correo_institucional" class="form-control border-start-0" 
                          value="{{ estudiante.correo_institucional }}" required>
+                </div>
+              </div>
+
+              <div class="col-md-12">
+                <label class="form-label fw-semibold text-primary">Proyecto Asignado</label>
+                <div class="input-group">
+                  <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-folder-check"></i></span>
+                  <select name="proyecto" class="form-select border-start-0" required>
+                    <option value="" disabled>Seleccione el proyecto...</option>
+                    <option value="APLICACIÓN DE TECNOLOGÍAS ELECTRÓNICAS Y DE COMUNICACIÓN PARA LA SEGURIDAD BARRIAL" {% if estudiante.proyecto == "APLICACIÓN DE TECNOLOGÍAS ELECTRÓNICAS Y DE COMUNICACIÓN PARA LA SEGURIDAD BARRIAL" %}selected{% endif %}>APLICACIÓN DE TECNOLOGÍAS ELECTRÓNICAS Y DE COMUNICACIÓN PARA LA SEGURIDAD BARRIAL</option>
+                    <option value="ORIENTACIÓN FORMATIVA PRÁCTICA-COLABORATIVO EN CARRERAS DE CIENCIAS, TECNOLOGÍA, INGENIERÍA Y MATEMÁTICA (STEM) EN LA PROVINCIA DE COTOPAXI" {% if estudiante.proyecto == "ORIENTACIÓN FORMATIVA PRÁCTICA-COLABORATIVO EN CARRERAS DE CIENCIAS, TECNOLOGÍA, INGENIERÍA Y MATEMÁTICA (STEM) EN LA PROVINCIA DE COTOPAXI" %}selected{% endif %}>ORIENTACIÓN FORMATIVA PRÁCTICA-COLABORATIVO EN CARRERAS DE CIENCIAS, TECNOLOGÍA, INGENIERÍA Y MATEMÁTICA (STEM) EN LA PROVINCIA DE COTOPAXI</option>
+                    <option value="INGENIERIA E INNOVACION TECNOLOGICA AL SERVICIO DEL DESARROLLO LOCAL Y COMUNITARIO EN LA PROVINCIA DE COTOPAXI." {% if estudiante.proyecto == "INGENIERIA E INNOVACION TECNOLOGICA AL SERVICIO DEL DESARROLLO LOCAL Y COMUNITARIO EN LA PROVINCIA DE COTOPAXI." %}selected{% endif %}>INGENIERIA E INNOVACION TECNOLOGICA AL SERVICIO DEL DESARROLLO LOCAL Y COMUNITARIO EN LA PROVINCIA DE COTOPAXI.</option>
+                    <option value="LA CIBERSEGURIDAD Y EFICIENCIA DE LA INFORMACIÓN EN LA COMUNIDAD" {% if estudiante.proyecto == "LA CIBERSEGURIDAD Y EFICIENCIA DE LA INFORMACIÓN EN LA COMUNIDAD" %}selected{% endif %}>LA CIBERSEGURIDAD Y EFICIENCIA DE LA INFORMACIÓN EN LA COMUNIDAD</option>
+                    <option value="RESPONSABILIDAD SOCIAL UNIVERSITARIA EN LA PROVINCIA DE COTOPAXI" {% if estudiante.proyecto == "RESPONSABILIDAD SOCIAL UNIVERSITARIA EN LA PROVINCIA DE COTOPAXI" %}selected{% endif %}>RESPONSABILIDAD SOCIAL UNIVERSITARIA EN LA PROVINCIA DE COTOPAXI</option>
+                    <option value="MANTENIMIENTO DE INSTALACIONES ENFOCADAS A LA MEJORA DE LA EFICIENCIA ENERGETICA" {% if estudiante.proyecto == "MANTENIMIENTO DE INSTALACIONES ENFOCADAS A LA MEJORA DE LA EFICIENCIA ENERGETICA" %}selected{% endif %}>MANTENIMIENTO DE INSTALACIONES ENFOCADAS A LA MEJORA DE LA EFICIENCIA ENERGETICA</option>
+                    <option value="INNOVACIÓN Y GESTIÓN DE RECURSOS HÍDRICOS PARA EL DESARROLLO COMUNITARIO" {% if estudiante.proyecto == "INNOVACIÓN Y GESTIÓN DE RECURSOS HÍDRICOS PARA EL DESARROLLO COMUNITARIO" or estudiante.proyecto == "Innovación y Gestión de Recursos Hídricos para el Desarrollo Comunitario" %}selected{% endif %}>INNOVACIÓN Y GESTIÓN DE RECURSOS HÍDRICOS PARA EL DESARROLLO COMUNITARIO</option>
+                    <option value="ENERGIAS SOSTENIBLES AL SERVICIO DE LA SOCIEDAD" {% if estudiante.proyecto == "ENERGIAS SOSTENIBLES AL SERVICIO DE LA SOCIEDAD" or estudiante.proyecto == "Energias Sostenibles al Servicio de la Sociedad" %}selected{% endif %}>ENERGIAS SOSTENIBLES AL SERVICIO DE LA SOCIEDAD</option>
+                  </select>
                 </div>
               </div>
 
@@ -78,8 +96,14 @@
                 <label class="form-label fw-semibold">Carrera</label>
                 <div class="input-group">
                   <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-mortarboard"></i></span>
-                  <input type="text" name="carrera" class="form-control border-start-0" 
-                         value="{{ estudiante.carrera }}" required>
+                  <select name="carrera" class="form-select border-start-0" required>
+                    <option value="Sistemas de información" {% if estudiante.carrera == "Sistemas de información" %}selected{% endif %}>Sistemas de información</option>
+                    <option value="Electromecánica" {% if estudiante.carrera == "Electromecánica" %}selected{% endif %}>Electromecánica</option>
+                    <option value="Industrial" {% if estudiante.carrera == "Industrial" %}selected{% endif %}>Industrial</option>
+                    <option value="Electricidad" {% if estudiante.carrera == "Electricidad" %}selected{% endif %}>Electricidad</option>
+                    <option value="Hidráulica" {% if estudiante.carrera == "Hidráulica" %}selected{% endif %}>Hidráulica</option>
+                    <option value="Software" {% if estudiante.carrera == "Software" %}selected{% endif %}>Software</option>
+                  </select>
                 </div>
               </div>
 
@@ -87,8 +111,10 @@
                 <label class="form-label fw-semibold">Tipo de Práctica</label>
                 <div class="input-group">
                   <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-briefcase"></i></span>
-                  <input type="text" name="tipo_practica" class="form-control border-start-0" 
-                         value="{{ estudiante.tipo_practica }}" required>
+                  <select name="tipo_practica" class="form-select border-start-0" required>
+                    <option value="PPP" {% if estudiante.tipo_practica == "PPP" %}selected{% endif %}>PPP - Prácticas Preprofesionales</option>
+                    <option value="Servicio Comunitario" {% if estudiante.tipo_practica == "Servicio Comunitario" %}selected{% endif %}>Servicio Comunitario</option>
+                  </select>
                 </div>
               </div>
 
@@ -96,8 +122,12 @@
                 <label class="form-label fw-semibold">Semestre</label>
                 <div class="input-group">
                   <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-layers"></i></span>
-                  <input type="text" name="semestre" class="form-control border-start-0" 
-                         value="{{ estudiante.semestre }}" required>
+                  <select name="semestre" class="form-select border-start-0" required>
+                    <option value="Cuarto" {% if estudiante.semestre == "Cuarto" %}selected{% endif %}>Cuarto</option>
+                    <option value="Quinto" {% if estudiante.semestre == "Quinto" %}selected{% endif %}>Quinto</option>
+                    <option value="Sexto" {% if estudiante.semestre == "Sexto" %}selected{% endif %}>Sexto</option>
+                    <option value="Séptimo" {% if estudiante.semestre == "Séptimo" %}selected{% endif %}>Séptimo</option>
+                  </select>
                 </div>
               </div>
 
@@ -106,7 +136,6 @@
                 <div class="input-group">
                   <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-calendar-event"></i></span>
                   <select name="periodo_academico" class="form-select border-start-0 ps-0" required>
-                    <option value="" disabled>Seleccione un periodo...</option>
                     <option value="ABRIL 2025 - AGOSTO 2025" {% if estudiante.periodo_academico == "ABRIL 2025 - AGOSTO 2025" %}selected{% endif %}>
                         ABRIL 2025 - AGOSTO 2025
                     </option>
@@ -189,15 +218,47 @@ $(document).ready(function() {
   $("#frm_editar_estudiante").validate({
       errorClass: "text-danger small mt-1",
       rules: {
-          cedula: { required: true, digits: true, minlength: 10, maxlength: 10 },
+          cedula: { 
+            required: true, 
+            digits: true, 
+            minlength: 10, 
+            maxlength: 10,
+            remote: {
+              url: "{% url 'validar_cedula_estudiante' %}",
+              type: "get",
+              data: {
+                estudiante_id: function() { return $("#estudiante_id").val(); }
+              }
+            }
+          },
           nombre: { required: true },
           apellido: { required: true },
-          correo_institucional: { required: true, email: true },
+          proyecto: { required: true },
+          correo_institucional: { 
+            required: true, 
+            email: true,
+            remote: {
+              url: "{% url 'validar_correo_estudiante' %}",
+              type: "get",
+              data: {
+                correo: function() { return $("#correo_institucional").val(); },
+                estudiante_id: function() { return $("#estudiante_id").val(); }
+              }
+            }
+          },
           periodo_academico: { required: true }
       },
       messages: {
-          cedula: "Ingrese una cédula válida de 10 dígitos.",
-          correo_institucional: "Ingrese un correo institucional válido.",
+          cedula: {
+            required: "Ingrese la cédula.",
+            digits: "Solo números.",
+            remote: "Esta cédula ya existe en otro registro."
+          },
+          correo_institucional: {
+            required: "Ingrese el correo.",
+            remote: "Este correo ya está en uso."
+          },
+          proyecto: "Seleccione un proyecto.",
           periodo_academico: "Seleccione un periodo académico."
       }
   });

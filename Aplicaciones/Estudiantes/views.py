@@ -45,6 +45,7 @@ def guardar_estudiante(request):
             apellido=request.POST.get('apellido'),
             cedula=request.POST.get('cedula'),
             correo_institucional=request.POST.get('correo_institucional'),
+            proyecto=request.POST.get('proyecto'), # <--- AGREGADO
             carrera=request.POST.get('carrera'),
             tipo_practica=request.POST.get('tipo_practica'),
             semestre=request.POST.get('semestre'),
@@ -55,8 +56,6 @@ def guardar_estudiante(request):
         return redirect('lista_estudiantes')
 
     return redirect('nuevo_estudiante')
-
-
 # ============================
 # ELIMINAR ESTUDIANTE
 # ============================
@@ -93,6 +92,7 @@ def procesar_edicion_estudiante(request):
         estudiante.apellido = request.POST.get('apellido')
         estudiante.cedula = request.POST.get('cedula')
         estudiante.correo_institucional = request.POST.get('correo_institucional')
+        estudiante.proyecto = request.POST.get('proyecto') # <--- AGREGADO
         estudiante.carrera = request.POST.get('carrera')
         estudiante.tipo_practica = request.POST.get('tipo_practica')
         estudiante.semestre = request.POST.get('semestre')
@@ -103,7 +103,6 @@ def procesar_edicion_estudiante(request):
         return redirect('lista_estudiantes')
 
     return redirect('lista_estudiantes')
-
 
 # ============================
 # REMOVER ESTUDIANTE DEL GRUPO

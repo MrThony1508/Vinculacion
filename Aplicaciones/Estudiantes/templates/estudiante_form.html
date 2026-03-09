@@ -7,7 +7,8 @@
       
       <div class="mb-4">
         <h4 class="fw-bold mb-1" style="color: #194077;">
-          <i class="bi bi-person-plus-fill me-2"></i>Registrar Nuevo Estudiante
+          <i class="bi bi-person-plus-fill me-2"></i>
+          {% if estudiante.id %}Editar Estudiante{% else %}Registrar Nuevo Estudiante{% endif %}
         </h4>
         <p class="text-muted">Complete la información técnica del estudiante para las prácticas académicas.</p>
       </div>
@@ -64,9 +65,27 @@
                 </div>
               </div>
 
-              <div class="col-12 mt-5">
+              <div class="col-md-12">
+                <label class="form-label fw-semibold text-primary">Proyecto de Vinculación / Práctica</label>
+                <div class="input-group">
+                  <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-folder-check"></i></span>
+                  <select name="proyecto" class="form-select border-start-0" required>
+                    <option value="" selected disabled>Seleccione el proyecto correspondiente...</option>
+                    <option value="APLICACIÓN DE TECNOLOGÍAS ELECTRÓNICAS Y DE COMUNICACIÓN PARA LA SEGURIDAD BARRIAL" {% if estudiante.proyecto == "APLICACIÓN DE TECNOLOGÍAS ELECTRÓNICAS Y DE COMUNICACIÓN PARA LA SEGURIDAD BARRIAL" %}selected{% endif %}>APLICACIÓN DE TECNOLOGÍAS ELECTRÓNICAS Y DE COMUNICACIÓN PARA LA SEGURIDAD BARRIAL</option>
+                    <option value="ORIENTACIÓN FORMATIVA PRÁCTICA-COLABORATIVO EN CARRERAS DE CIENCIAS, TECNOLOGÍA, INGENIERÍA Y MATEMÁTICA (STEM) EN LA PROVINCIA DE COTOPAXI" {% if estudiante.proyecto == "ORIENTACIÓN FORMATIVA PRÁCTICA-COLABORATIVO EN CARRERAS DE CIENCIAS, TECNOLOGÍA, INGENIERÍA Y MATEMÁTICA (STEM) EN LA PROVINCIA DE COTOPAXI" %}selected{% endif %}>ORIENTACIÓN FORMATIVA PRÁCTICA-COLABORATIVO EN CARRERAS DE CIENCIAS, TECNOLOGÍA, INGENIERÍA Y MATEMÁTICA (STEM) EN LA PROVINCIA DE COTOPAXI</option>
+                    <option value="INGENIERIA E INNOVACION TECNOLOGICA AL SERVICIO DEL DESARROLLO LOCAL Y COMUNITARIO EN LA PROVINCIA DE COTOPAXI." {% if estudiante.proyecto == "INGENIERIA E INNOVACION TECNOLOGICA AL SERVICIO DEL DESARROLLO LOCAL Y COMUNITARIO EN LA PROVINCIA DE COTOPAXI." %}selected{% endif %}>INGENIERIA E INNOVACION TECNOLOGICA AL SERVICIO DEL DESARROLLO LOCAL Y COMUNITARIO EN LA PROVINCIA DE COTOPAXI.</option>
+                    <option value="LA CIBERSEGURIDAD Y EFICIENCIA DE LA INFORMACIÓN EN LA COMUNIDAD" {% if estudiante.proyecto == "LA CIBERSEGURIDAD Y EFICIENCIA DE LA INFORMACIÓN EN LA COMUNIDAD" %}selected{% endif %}>LA CIBERSEGURIDAD Y EFICIENCIA DE LA INFORMACIÓN EN LA COMUNIDAD</option>
+                    <option value="RESPONSABILIDAD SOCIAL UNIVERSITARIA EN LA PROVINCIA DE COTOPAXI" {% if estudiante.proyecto == "RESPONSABILIDAD SOCIAL UNIVERSITARIA EN LA PROVINCIA DE COTOPAXI" %}selected{% endif %}>RESPONSABILIDAD SOCIAL UNIVERSITARIA EN LA PROVINCIA DE COTOPAXI</option>
+                    <option value="MANTENIENTO DE INSTALACIONES ENFOCADAS A LA MEJORA DE LA EFICIENCIA ENERGETICA" {% if estudiante.proyecto == "MANTENIENTO DE INSTALACIONES ENFOCADAS A LA MEJORA DE LA EFICIENCIA ENERGETICA" %}selected{% endif %}>MANTENIENTO DE INSTALACIONES ENFOCADAS A LA MEJORA DE LA EFICIENCIA ENERGETICA</option>
+                    <option value="Innovación y Gestión de Recursos Hídricos para el Desarrollo Comunitario" {% if estudiante.proyecto == "Innovación y Gestión de Recursos Hídricos para el Desarrollo Comunitario" %}selected{% endif %}>Innovación y Gestión de Recursos Hídricos para el Desarrollo Comunitario</option>
+                    <option value="Energias Sostenibles al Servicio de la Sociedad" {% if estudiante.proyecto == "Energias Sostenibles al Servicio de la Sociedad" %}selected{% endif %}>Energias Sostenibles al Servicio de la Sociedad</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="col-12 mt-4">
                 <h6 class="text-uppercase fw-bold text-secondary mb-3" style="font-size: 0.8rem; letter-spacing: 1px;">
-                  Detalles Académicos y Prácticas
+                  Detalles Académicos
                 </h6>
                 <hr class="mt-0 mb-4 opacity-10">
               </div>
@@ -88,12 +107,12 @@
               </div>
 
               <div class="col-md-6">
-                  <label class="form-label small fw-semibold">Asignación de Prácticas</label>
+                  <label class="form-label fw-semibold">Asignación de Prácticas</label>
                   <div class="input-group">
                       <span class="input-group-text bg-light border-end-0 text-muted">
                           <i class="bi bi-briefcase"></i>
                       </span>
-                      <select name="tipo_practica" class="form-select border-start-0 ps-0" required>
+                      <select name="tipo_practica" class="form-select border-start-0" required>
                           <option value="" selected disabled>Seleccione una opción...</option>
                           <option value="PPP" {% if estudiante.tipo_practica == "PPP" %}selected{% endif %}>PPP - Prácticas Preprofesionales</option>
                           <option value="Servicio Comunitario" {% if estudiante.tipo_practica == "Servicio Comunitario" %}selected{% endif %}>Servicio Comunitario</option>
@@ -121,14 +140,10 @@
                       <span class="input-group-text bg-light border-end-0 text-muted">
                           <i class="bi bi-calendar-event"></i>
                       </span>
-                      <select name="periodo_academico" class="form-select border-start-0 ps-0" required>
+                      <select name="periodo_academico" class="form-select border-start-0" required>
                           <option value="" disabled {% if not estudiante.periodo_academico %}selected{% endif %}>Seleccione un periodo...</option>
-                          <option value="ABRIL 2025 - AGOSTO 2025" {% if estudiante.periodo_academico == "ABRIL 2025 - AGOSTO 2025" %}selected{% endif %}>
-                              ABRIL 2025 - AGOSTO 2025
-                          </option>
-                          <option value="OCTUBRE 2025 - MARZO 2026" {% if estudiante.periodo_academico == "OCTUBRE 2025 - MARZO 2026" %}selected{% endif %}>
-                              OCTUBRE 2025 - MARZO 2026
-                          </option>
+                          <option value="ABRIL 2025 - AGOSTO 2025" {% if estudiante.periodo_academico == "ABRIL 2025 - AGOSTO 2025" %}selected{% endif %}>ABRIL 2025 - AGOSTO 2025</option>
+                          <option value="OCTUBRE 2025 - MARZO 2026" {% if estudiante.periodo_academico == "OCTUBRE 2025 - MARZO 2026" %}selected{% endif %}>OCTUBRE 2025 - MARZO 2026</option>
                       </select>
                   </div>
               </div>
@@ -184,7 +199,6 @@ $(document).ready(function() {
           if (data && data.nombres && data.apellidos) {
               $('#nombreInput').val(data.nombres);
               $('#apellidoInput').val(data.apellidos);
-              // Validar campos autocompletados
               $("#nombreInput").valid();
               $("#apellidoInput").valid();
           } else {
@@ -210,6 +224,7 @@ $(document).ready(function() {
     rules: {
       nombre: { required: true },
       apellido: { required: true },
+      proyecto: { required: true },
       cedula: { 
         required: true, 
         digits: true, 
@@ -243,6 +258,7 @@ $(document).ready(function() {
     messages: {
       nombre: "El nombre es obligatorio",
       apellido: "El apellido es obligatorio",
+      proyecto: "Seleccione el proyecto de vinculación",
       cedula: {
         required: "La cédula es obligatoria",
         digits: "Solo se permiten números",

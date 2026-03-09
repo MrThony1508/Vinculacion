@@ -25,24 +25,17 @@ class Grupo(models.Model):
 
 
 class Estudiante(models.Model):
-    docente = models.ForeignKey(
-        Docente,
-        on_delete=models.CASCADE,
-        related_name='estudiantes'
-    )
-
-    grupo = models.ForeignKey(
-        Grupo,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name='estudiantes'
-    )
-
+    # ... (campos anteriores)
+    docente = models.ForeignKey(Docente, on_delete=models.CASCADE, related_name='estudiantes')
+    grupo = models.ForeignKey(Grupo, on_delete=models.SET_NULL, null=True, blank=True, related_name='estudiantes')
+    
     nombre = models.CharField(max_length=100)
     apellido = models.CharField(max_length=100)
     cedula = models.CharField(max_length=10)
     correo_institucional = models.EmailField(max_length=100)
+    
+    # NUEVO CAMPO AGREGADO
+    proyecto = models.CharField(max_length=255)
 
     carrera = models.CharField(max_length=100)
     tipo_practica = models.CharField(max_length=50)

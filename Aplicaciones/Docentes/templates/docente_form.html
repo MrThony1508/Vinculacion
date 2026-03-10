@@ -83,9 +83,21 @@
                 <label class="form-label small fw-semibold">Asignación de Prácticas</label>
                 <select name="asignacion" class="form-select bg-light border-0 py-2">
                   <option value="">Seleccione asignación...</option>
-                  <option value="PPP">PPP - Prácticas Preprofesionales</option>
+                  <option value="PPP">PL - Prácticas Laborales</option>
                   <option value="Servicio Comunitario">Servicio Comunitario</option>
                 </select>
+              </div>
+
+              <div class="col-md-12 mb-3">
+                <label class="form-label small fw-semibold">Periodo Académico</label>
+                <div class="input-group">
+                  <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-calendar3"></i></span>
+                  <select name="periodo" class="form-select border-start-0 ps-0 bg-light">
+                    <option value="">Seleccione el periodo...</option>
+                    <option value="ABRIL 2025 - AGOSTO 2025">ABRIL 2025 - AGOSTO 2025</option>
+                    <option value="OCTUBRE 2025 - MARZO 2026">OCTUBRE 2025 - MARZO 2026</option>
+                  </select>
+                </div>
               </div>
             </div>
 
@@ -107,7 +119,6 @@
 </div>
 
 <style>
-  /* Tus estilos existentes se mantienen */
   .form-control, .form-select {
     border-radius: 10px;
     padding: 0.6rem 0.8rem;
@@ -121,7 +132,7 @@
     box-shadow: 0 0 0 4px rgba(71, 85, 105, 0.05);
     color: #1e293b;
   }
-  .input-group-text { border-radius: 10px; border: 1px solid #e2e8f0; }
+  .input-group-text { border-radius: 10px 0 0 10px; border: 1px solid #e2e8f0; }
   .error { color: #e63946; font-size: 0.75rem; margin-top: 4px; font-weight: 500; }
   input.error, select.error { border-color: #fca5a5 !important; background-color: #fff1f2 !important; }
 </style>
@@ -154,7 +165,6 @@ $(document).ready(function() {
           if (data && data.nombres && data.apellidos) {
               $('#nombreInput').val(data.nombres);
               $('#apellidoInput').val(data.apellidos);
-              // Disparar validación después de autocompletar
               $("#nombreInput").valid();
               $("#apellidoInput").valid();
           } else {
@@ -168,16 +178,14 @@ $(document).ready(function() {
       }
   }
 
-  // Evento al perder el foco en el campo cédula
   $('#cedulaInput').on('blur', function() {
       const cedula = $(this).val().trim();
-      // Solo consultar si tiene 10 dígitos y es válida para el validador de JQuery
       if (cedula.length === 10 && !isNaN(cedula) && $(this).valid()) {
           consultarCedula(cedula);
       }
   });
 
-  // --- TU VALIDACIÓN EXISTENTE ---
+  // --- VALIDACIÓN JQUERY ---
   $.validator.addMethod("soloLetras", function(value, element) {
       return this.optional(element) || /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/i.test(value);
   }, "Solo se permiten letras.");
@@ -206,13 +214,15 @@ $(document).ready(function() {
         }
       },
       carrera: { required: true },
-      asignacion: { required: true }
+      asignacion: { required: true },
+      periodo: { required: true } // Regla para el nuevo campo
     },
     messages: {
-      cedula: {
-        remote: "Esta cédula ya se encuentra registrada."
-      },
-      // ... tus otros mensajes
+      cedula: { remote: "Esta cédula ya se encuentra registrada." },
+      correo: { remote: "Este correo ya está en uso." },
+      carrera: { required: "Seleccione una carrera." },
+      asignacion: { required: "Seleccione una asignación." },
+      periodo: { required: "Seleccione el periodo académico." }
     },
     highlight: function(element) { $(element).addClass('error'); },
     unhighlight: function(element) { $(element).removeClass('error'); }

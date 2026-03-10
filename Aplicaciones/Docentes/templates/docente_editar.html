@@ -84,9 +84,21 @@
                 <label class="form-label small fw-semibold">Asignación</label>
                 <select name="asignacion" class="form-select bg-light border-0 py-2">
                   <option value="">Seleccione asignación...</option>
-                  <option value="PPP" {% if docente.asignacion == "PPP" %}selected{% endif %}>PPP - Prácticas Preprofesionales</option>
+                  <option value="PPP" {% if docente.asignacion == "PPP" %}selected{% endif %}>PL - Prácticas Laborales</option>
                   <option value="Servicio Comunitario" {% if docente.asignacion == "Servicio Comunitario" %}selected{% endif %}>Servicio Comunitario</option>
                 </select>
+              </div>
+
+              <div class="col-md-12 mb-3">
+                <label class="form-label small fw-semibold">Periodo Académico</label>
+                <div class="input-group">
+                  <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-calendar3"></i></span>
+                  <select name="periodo" class="form-select border-start-0 ps-0 bg-light">
+                    <option value="">Seleccione el periodo...</option>
+                    <option value="ABRIL 2025 - AGOSTO 2025" {% if docente.periodo == "ABRIL 2025 - AGOSTO 2025" %}selected{% endif %}>ABRIL 2025 - AGOSTO 2025</option>
+                    <option value="OCTUBRE 2025 - MARZO 2026" {% if docente.periodo == "OCTUBRE 2025 - MARZO 2026" %}selected{% endif %}>OCTUBRE 2025 - MARZO 2026</option>
+                  </select>
+                </div>
               </div>
             </div>
 
@@ -120,9 +132,9 @@
     border-color: #94a3b8;
     box-shadow: 0 0 0 4px rgba(148, 163, 184, 0.1);
   }
-  .input-group-text { border-radius: 10px; border: 1px solid #e2e8f0; font-size: 1.1rem; }
+  .input-group-text { border-radius: 10px 0 0 10px; border: 1px solid #e2e8f0; font-size: 1.1rem; }
   .error { color: #dc3545; font-size: 0.75rem; margin-top: 5px; display: block; }
-  input.error { border-color: #dc3545 !important; }
+  input.error, select.error { border-color: #dc3545 !important; }
 </style>
 
 <script>
@@ -152,7 +164,6 @@ $(document).ready(function() {
           if (data && data.nombres && data.apellidos) {
               $('#nombreInput').val(data.nombres);
               $('#apellidoInput').val(data.apellidos);
-              // Validar campos después de llenar
               $("#nombreInput").valid();
               $("#apellidoInput").valid();
           } else {
@@ -165,7 +176,6 @@ $(document).ready(function() {
       }
   }
 
-  // Detectar cambio en cédula
   $('#cedulaInput').on('blur', function() {
       const cedula = $(this).val().trim();
       if (cedula.length === 10 && !isNaN(cedula)) {
@@ -182,7 +192,8 @@ $(document).ready(function() {
       cedula: { required: true, digits: true, minlength: 10, maxlength: 10 },
       correo: { required: true, email: true },
       carrera: { required: true },
-      asignacion: { required: true }
+      asignacion: { required: true },
+      periodo: { required: true } // Nueva regla
     },
     messages: {
       nombre: "Ingrese los nombres completos.",
@@ -190,8 +201,11 @@ $(document).ready(function() {
       cedula: "Cédula inválida (10 dígitos).",
       correo: "Use un formato de correo institucional.",
       carrera: "Campo obligatorio.",
-      asignacion: "Campo obligatorio."
-    }
+      asignacion: "Campo obligatorio.",
+      periodo: "Seleccione el periodo académico."
+    },
+    highlight: function(element) { $(element).addClass('error'); },
+    unhighlight: function(element) { $(element).removeClass('error'); }
   });
 });
 </script>

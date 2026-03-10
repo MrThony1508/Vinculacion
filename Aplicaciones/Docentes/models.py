@@ -8,11 +8,12 @@ class Docente(models.Model):
     cedula = models.CharField(max_length=10, unique=True)
     correo_institucional = models.EmailField(unique=True)
     carrera = models.CharField(max_length=100)
-    asignacion = models.CharField(max_length=100)  # ← igual que carrera
+    asignacion = models.CharField(max_length=100)
+    # Nuevo campo añadido:
+    periodo = models.CharField(max_length=100) 
 
     def __str__(self):
         return f"{self.nombre} {self.apellido}"
-
 class Programa(models.Model):
     # Asegúrate de que se llamen así:
     proyecto = models.CharField(max_length=255) 

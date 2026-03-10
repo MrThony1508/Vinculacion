@@ -52,14 +52,12 @@ def guardar_docente(request):
         correo = request.POST.get('correo')
         carrera = request.POST.get('carrera')
         asignacion = request.POST.get('asignacion')
+        periodo = request.POST.get('periodo')  # <--- Capturar periodo
 
         if not correo:
             messages.error(request, 'Debe ingresar un correo')
             return redirect('nuevo_docente')
 
-        
-
-        # Validar cédula
         if Docente.objects.filter(cedula=cedula).exists():
             messages.error(request, 'La cédula ya está registrada')
             return redirect('nuevo_docente')
@@ -82,7 +80,8 @@ def guardar_docente(request):
             cedula=cedula,
             correo_institucional=correo,
             carrera=carrera,
-            asignacion=asignacion
+            asignacion=asignacion,
+            periodo=periodo  # <--- Guardar periodo
         )
 
         try:
@@ -94,20 +93,12 @@ def guardar_docente(request):
                 fail_silently=False
             )
         except SMTPException:
-            messages.warning(
-                request,
-                'El docente se registró, pero no se pudo enviar el correo.'
-            )
+            messages.warning(request, 'Docente registrado, pero falló el envío del correo.')
 
-        messages.success(
-            request,
-            'Docente registrado correctamente'
-        )
-
+        messages.success(request, 'Docente registrado correctamente')
         return redirect('lista_docentes')
 
     return redirect('nuevo_docente')
-
 # ============================
 # ELIMINAR DOCENTE
 # ============================
@@ -148,6 +139,7 @@ def procesar_edicion_docente(request):
         docente.cedula = request.POST.get('cedula')
         docente.carrera = request.POST.get('carrera')
         docente.asignacion = request.POST.get('asignacion')
+        docente.periodo = request.POST.get('periodo') # <--- Actualizar periodo
 
         # Actualizar usuario asociado
         correo = request.POST.get('correo')

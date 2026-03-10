@@ -28,8 +28,6 @@
         <input type="text" id="buscar" class="form-control search-input" placeholder="Buscar proyecto, coordinador o periodo...">
     </div>
 
-    
-
     <div id="programasContainer" class="row">
         {% if programas %}
             {% for programa in programas %}
@@ -51,7 +49,13 @@
                             <div class="stat-box">
                                 <img src="https://cdn-icons-png.flaticon.com/512/3135/3135810.png" width="35" alt="Estudiantes">
                                 <span class="stat-label">Estudiantes</span>
-                                <span class="stat-value">{{ programa.conteo_real }} asignados</span>
+                                {% if programa.conteo_real > 0 %}
+                                    <a href="{% url 'descargar_estudiantes' programa.proyecto %}" class="stat-value text-decoration-none">
+                                        {{ programa.conteo_real }} asignados <i class="bi bi-download"></i>
+                                    </a>
+                                {% else %}
+                                    <span class="stat-value text-muted">0 asignados</span>
+                                {% endif %}
                             </div>
                         </div>
                         <div class="col-6 col-md-3">
